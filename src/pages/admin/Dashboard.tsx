@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,6 +5,7 @@ import { properties } from '@/data/properties';
 import { agents } from '@/data/agents';
 import { Card } from '@/components/ui/card';
 import { Home, Users, DollarSign, PieChart } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 const AdminDashboard: React.FC = () => {
   const { isAdmin, user } = useAuth();
