@@ -33,7 +33,7 @@ const AboutSection: React.FC = () => {
           <div className="order-1 lg:order-2 relative">
             <div className="aspect-square rounded-lg overflow-hidden">
               <img 
-                src="/about-image.jpg" 
+                src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1500&q=80" 
                 alt="Musili Homes Team" 
                 className="w-full h-full object-cover"
               />
