@@ -32,8 +32,8 @@ const mockUsers = [
   },
   {
     id: 2,
-    name: "Agent User",
-    email: "agent@musili.co.ke",
+    name: "Sarah Kimani",
+    email: "sarah@musili.co.ke",
     password: "agent123",
     role: "agent" as const
   }
