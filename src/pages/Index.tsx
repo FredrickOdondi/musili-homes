@@ -34,7 +34,7 @@ const Index = () => {
                 saves valuable time in the property search process.
               </p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg">
+            <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg shadow-lg">
               <Scene3D className="h-[400px] rounded-lg" />
             </div>
           </div>
