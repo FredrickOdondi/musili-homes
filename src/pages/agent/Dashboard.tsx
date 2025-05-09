@@ -6,11 +6,12 @@ import { Agent } from '@/types';
 import { properties } from '@/data/properties';
 import { Property } from '@/types';
 import { Card } from '@/components/ui/card';
-import { Home, DollarSign, Users } from 'lucide-react';
+import { Home, DollarSign, Users, LogOut } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const AgentDashboard: React.FC = () => {
-  const { isAgent, user } = useAuth();
+  const { isAgent, user, logout } = useAuth();
   const navigate = useNavigate();
   const [agentProperties, setAgentProperties] = React.useState<Property[]>([]);
   
@@ -30,6 +31,11 @@ const AgentDashboard: React.FC = () => {
     return null;
   }
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   // Calculate dashboard statistics
   const totalProperties = agentProperties.length;
   const totalValue = agentProperties.reduce((sum, property) => sum + property.price, 0);
@@ -38,8 +44,16 @@ const AgentDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-offWhite">
       <div className="bg-navy py-6">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">Agent Dashboard</h1>
+          <Button 
+            variant="outline" 
+            className="border-white text-white hover:bg-white/10"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
         </div>
       </div>
       

@@ -1,14 +1,16 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { properties } from '@/data/properties';
 import { agents } from '@/data/agents';
 import { Card } from '@/components/ui/card';
-import { Home, Users, DollarSign, PieChart } from 'lucide-react';
+import { Home, Users, DollarSign, PieChart, LogOut } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const AdminDashboard: React.FC = () => {
-  const { isAdmin, user } = useAuth();
+  const { isAdmin, user, logout } = useAuth();
   const navigate = useNavigate();
   
   // Redirect if not admin
@@ -22,6 +24,11 @@ const AdminDashboard: React.FC = () => {
     return null;
   }
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   // Calculate dashboard statistics
   const totalProperties = properties.length;
   const totalAgents = agents.length;
@@ -31,8 +38,16 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-offWhite">
       <div className="bg-navy py-6">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
+          <Button 
+            variant="outline" 
+            className="border-white text-white hover:bg-white/10"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
         </div>
       </div>
       
