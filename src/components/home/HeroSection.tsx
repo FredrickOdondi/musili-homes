@@ -18,16 +18,16 @@ const HeroSection: React.FC = () => {
       
       <div className="container mx-auto px-4 z-10 relative">
         <div className="max-w-2xl">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 text-shadow">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
             Luxury Living in <span className="text-gold">Kenya</span>
           </h1>
-          <p className="text-xl text-white/90 mb-8">
+          <p className="text-xl text-white mb-8">
             Discover exceptional properties in Kenya's most prestigious locations.
             Experience luxury living at its finest.
           </p>
           <div className="flex flex-wrap gap-4">
             <Link to="/properties">
-              <Button className="bg-gold text-navy hover:bg-gold/90 text-lg px-8 py-6">
+              <Button className="bg-gold text-gray-900 hover:bg-gold/90 text-lg px-8 py-6">
                 Explore Properties
               </Button>
             </Link>

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 const Contact: React.FC = () => {
@@ -34,12 +34,12 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-offWhite">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="bg-navy py-20">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-white mb-2">Contact Us</h1>
-            <p className="text-xl text-white/80">Get in touch with our luxury real estate experts</p>
+            <p className="text-xl text-white">Get in touch with our luxury real estate experts</p>
           </div>
         </div>
       </div>
@@ -47,8 +47,8 @@ const Contact: React.FC = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <div>
-            <h2 className="text-3xl font-bold text-navy mb-4">Get In Touch</h2>
-            <p className="text-lg text-charcoal/80 mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Get In Touch</h2>
+            <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
               Have questions about our properties or services? Our team is here to help you
               find your perfect luxury home in Kenya.
             </p>
@@ -56,11 +56,11 @@ const Contact: React.FC = () => {
             <div className="space-y-6 mb-8">
               <div className="flex items-start">
                 <div className="bg-gold rounded-full p-3 mr-4">
-                  <MapPin className="h-6 w-6 text-navy" />
+                  <MapPin className="h-6 w-6 text-gray-900" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-navy mb-1">Our Location</h3>
-                  <p className="text-charcoal/80">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">Our Location</h3>
+                  <p className="text-gray-700 dark:text-gray-300">
                     Westlands Business Park<br />
                     Nairobi, Kenya
                   </p>
@@ -69,31 +69,31 @@ const Contact: React.FC = () => {
               
               <div className="flex items-start">
                 <div className="bg-gold rounded-full p-3 mr-4">
-                  <Phone className="h-6 w-6 text-navy" />
+                  <Phone className="h-6 w-6 text-gray-900" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-navy mb-1">Phone Number</h3>
-                  <p className="text-charcoal/80">+254 712 345 678</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">Phone Number</h3>
+                  <p className="text-gray-700 dark:text-gray-300">+254 712 345 678</p>
                 </div>
               </div>
               
               <div className="flex items-start">
                 <div className="bg-gold rounded-full p-3 mr-4">
-                  <Mail className="h-6 w-6 text-navy" />
+                  <Mail className="h-6 w-6 text-gray-900" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-navy mb-1">Email Address</h3>
-                  <p className="text-charcoal/80">info@musili.co.ke</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">Email Address</h3>
+                  <p className="text-gray-700 dark:text-gray-300">info@musili.co.ke</p>
                 </div>
               </div>
               
               <div className="flex items-start">
                 <div className="bg-gold rounded-full p-3 mr-4">
-                  <Clock className="h-6 w-6 text-navy" />
+                  <Clock className="h-6 w-6 text-gray-900" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-navy mb-1">Office Hours</h3>
-                  <p className="text-charcoal/80">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">Office Hours</h3>
+                  <p className="text-gray-700 dark:text-gray-300">
                     Monday - Friday: 8:00 AM - 6:00 PM<br />
                     Saturday: 9:00 AM - 1:00 PM<br />
                     Sunday: Closed
@@ -103,12 +103,12 @@ const Contact: React.FC = () => {
             </div>
           </div>
           
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-navy mb-6">Send Us A Message</h2>
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send Us A Message</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Full Name
                 </label>
                 <Input
@@ -117,12 +117,12 @@ const Contact: React.FC = () => {
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="Enter your name"
-                  className="w-full"
+                  className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
                 />
               </div>
               
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Email Address
                 </label>
                 <Input
@@ -132,12 +132,12 @@ const Contact: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="Enter your email"
-                  className="w-full"
+                  className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
                 />
               </div>
               
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Phone Number
                 </label>
                 <Input
@@ -145,12 +145,12 @@ const Contact: React.FC = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Enter your phone number"
-                  className="w-full"
+                  className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
                 />
               </div>
               
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Message
                 </label>
                 <textarea
@@ -160,13 +160,13 @@ const Contact: React.FC = () => {
                   onChange={(e) => setMessage(e.target.value)}
                   required
                   placeholder="What can we help you with?"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  className="w-full rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 ></textarea>
               </div>
               
               <Button 
                 type="submit" 
-                className="w-full bg-gold text-navy hover:bg-gold/90"
+                className="w-full bg-gold text-gray-900 hover:bg-gold/90"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Sending..." : "Send Message"}

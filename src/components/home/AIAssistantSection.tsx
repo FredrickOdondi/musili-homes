@@ -40,30 +40,30 @@ const AIAssistantSection: React.FC = () => {
   };
   
   return (
-    <div className="py-20 bg-navy text-white dark:bg-gray-800">
+    <div id="ai-assistant" className="py-20 bg-navy text-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-2">AI Property Assistant</h2>
+          <h2 className="text-4xl font-bold mb-2 text-white">AI Property Assistant</h2>
           <div className="w-24 h-1 bg-gold mx-auto mb-4"></div>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+          <p className="text-lg text-white max-w-2xl mx-auto">
             Get instant answers about our properties, locations, and services.
           </p>
         </div>
         
         <div className="max-w-3xl mx-auto">
-          <Card className="p-6 bg-white/5 backdrop-blur-sm rounded-lg shadow-lg dark:bg-gray-700/50">
+          <Card className="p-6 bg-white/5 backdrop-blur-sm rounded-lg shadow-lg">
             <div className="flex items-start space-x-4 mb-6">
               <div className="bg-gold p-3 rounded-full">
-                <Bot className="h-6 w-6 text-navy dark:text-gray-800" />
+                <Bot className="h-6 w-6 text-gray-900" />
               </div>
               <div>
-                <h3 className="font-bold text-xl">Property Assistant</h3>
-                <p className="text-white/80 dark:text-white/90">Ask me anything about our properties</p>
+                <h3 className="font-bold text-xl text-white">Property Assistant</h3>
+                <p className="text-white/80">Ask me anything about our properties</p>
               </div>
             </div>
             
             {response && (
-              <div className="mb-6 p-4 rounded-lg bg-white/10 dark:bg-gray-600/50">
+              <div className="mb-6 p-4 rounded-lg bg-white/10">
                 <p className="text-white">{response}</p>
               </div>
             )}
@@ -73,11 +73,11 @@ const AIAssistantSection: React.FC = () => {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Ask about properties, locations, or prices..."
-                className="flex-grow bg-white/20 border-white/20 text-white placeholder:text-white/50 dark:bg-gray-600/50 dark:border-gray-500/50"
+                className="flex-grow bg-white/20 border-white/20 text-white placeholder:text-white/50"
               />
               <Button 
                 type="submit" 
-                className="bg-gold text-navy hover:bg-gold/90 dark:text-gray-800"
+                className="bg-gold text-gray-900 hover:bg-gold/90"
                 disabled={isLoading}
               >
                 {isLoading ? "Thinking..." : "Ask"}

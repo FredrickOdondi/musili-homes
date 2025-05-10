@@ -98,10 +98,12 @@
 
   html {
     @apply overflow-x-hidden scroll-smooth;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'San Francisco', system-ui, sans-serif;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'San Francisco', system-ui, sans-serif;
   }
 
   /* Ensure text visibility in both themes */
@@ -152,4 +154,48 @@
 
 .message-received {
   @apply bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white;
+}
+
+/* Fix for specific components with visibility issues */
+.bg-navy {
+  @apply bg-blue-900 dark:bg-blue-900;
+}
+
+.text-navy {
+  @apply text-blue-900 dark:text-blue-900;
+}
+
+.bg-gold {
+  @apply bg-yellow-500 dark:bg-yellow-500;
+}
+
+.text-gold {
+  @apply text-yellow-500 dark:text-yellow-500;
+}
+
+/* Fix for contact buttons and other elements with visibility issues */
+.text-white {
+  @apply dark:text-white;
+}
+
+/* AIAssistantSection specific fixes */
+#ai-assistant {
+  @apply text-white dark:text-white;
+}
+
+#ai-assistant .text-white {
+  @apply text-white dark:text-white;
+}
+
+#ai-assistant .bg-white\/5 {
+  @apply bg-white/5 dark:bg-gray-700/50;
+}
+
+#ai-assistant input::placeholder {
+  @apply text-white/50 dark:text-white/50;
+}
+
+/* Contact button fixes */
+.hero-button {
+  @apply text-gray-800 dark:text-white border-gray-800 dark:border-white hover:bg-gray-100 dark:hover:bg-white/10;
 }

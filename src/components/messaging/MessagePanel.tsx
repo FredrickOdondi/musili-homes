@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Avatar } from '@/components/ui/avatar';
 import { Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -19,7 +18,6 @@ interface Message {
 interface User {
   id: number;
   name: string;
-  photo?: string;
   role: 'agent' | 'admin';
 }
 
@@ -98,17 +96,13 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
   };
 
   return (
-    <Card className="flex flex-col h-[500px] dark:bg-gray-800 dark:text-white">
-      <div className="p-4 border-b dark:border-gray-600 flex items-center gap-3">
-        <Avatar>
-          <img 
-            src={recipient.photo || 'https://via.placeholder.com/40'} 
-            alt={recipient.name} 
-            className="h-full w-full object-cover"
-          />
-        </Avatar>
+    <Card className="flex flex-col h-[500px] dark:bg-gray-800 bg-white">
+      <div className="p-4 border-b dark:border-gray-600 border-gray-200 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-200">
+          {recipient.name.charAt(0).toUpperCase()}
+        </div>
         <div>
-          <h3 className="font-bold">{recipient.name}</h3>
+          <h3 className="font-bold text-gray-900 dark:text-white">{recipient.name}</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">{recipient.role === 'admin' ? 'Administrator' : 'Agent'}</p>
         </div>
       </div>
@@ -119,7 +113,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
             key={message.id} 
             className={`max-w-[80%] ${message.senderId === currentUser.id ? 
               'ml-auto bg-blue-500 text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg' : 
-              'mr-auto bg-gray-200 dark:bg-gray-700 dark:text-white rounded-tl-lg rounded-tr-lg rounded-br-lg'} p-3`}
+              'mr-auto bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-tl-lg rounded-tr-lg rounded-br-lg'} p-3`}
           >
             <p>{message.content}</p>
             <span className="text-xs opacity-70 block text-right">
@@ -129,14 +123,14 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
         ))}
       </div>
 
-      <form onSubmit={handleSendMessage} className="p-4 border-t dark:border-gray-600 flex gap-2">
+      <form onSubmit={handleSendMessage} className="p-4 border-t dark:border-gray-600 border-gray-200 flex gap-2">
         <Input 
           value={newMessage} 
           onChange={(e) => setNewMessage(e.target.value)} 
           placeholder="Type your message..."
-          className="flex-1 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+          className="flex-1 dark:bg-gray-700 dark:text-white bg-white text-gray-900 dark:border-gray-600 border-gray-200"
         />
-        <Button type="submit">
+        <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
           <Send className="h-4 w-4" />
         </Button>
       </form>
