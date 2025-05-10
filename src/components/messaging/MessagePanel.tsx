@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -28,8 +28,8 @@ interface MessagePanelProps {
   recipient: User;
 }
 
-// Sample messages for demo purposes
-const sampleMessages: Message[] = [
+// This would be replaced with a real database in a production app
+const globalMessages: Message[] = [
   {
     id: 1,
     senderId: 1, // Admin
@@ -57,9 +57,18 @@ const sampleMessages: Message[] = [
 ];
 
 const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) => {
-  const [messages, setMessages] = useState<Message[]>(sampleMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const { toast } = useToast();
+
+  // Load messages for the current conversation
+  useEffect(() => {
+    const conversationMessages = globalMessages.filter(msg => 
+      (msg.senderId === currentUser.id && msg.receiverId === recipient.id) || 
+      (msg.receiverId === currentUser.id && msg.senderId === recipient.id)
+    );
+    setMessages(conversationMessages);
+  }, [currentUser.id, recipient.id]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +76,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
 
     // Create new message
     const message: Message = {
-      id: messages.length + 1,
+      id: Date.now(), // Use timestamp as a simple ID generator
       senderId: currentUser.id,
       receiverId: recipient.id,
       content: newMessage,
@@ -75,6 +84,10 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
       read: false
     };
 
+    // Add to global messages (this would be a database call in a real app)
+    globalMessages.push(message);
+    
+    // Update local state
     setMessages([...messages, message]);
     setNewMessage('');
 
@@ -88,7 +101,11 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
     <Card className="flex flex-col h-[500px] dark:bg-gray-800 dark:text-white">
       <div className="p-4 border-b dark:border-gray-600 flex items-center gap-3">
         <Avatar>
-          <img src={recipient.photo || 'https://via.placeholder.com/40'} alt={recipient.name} />
+          <img 
+            src={recipient.photo || 'https://via.placeholder.com/40'} 
+            alt={recipient.name} 
+            className="h-full w-full object-cover"
+          />
         </Avatar>
         <div>
           <h3 className="font-bold">{recipient.name}</h3>
@@ -97,10 +114,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.filter(msg => 
-          (msg.senderId === currentUser.id && msg.receiverId === recipient.id) || 
-          (msg.receiverId === currentUser.id && msg.senderId === recipient.id)
-        ).map(message => (
+        {messages.map(message => (
           <div 
             key={message.id} 
             className={`max-w-[80%] ${message.senderId === currentUser.id ? 

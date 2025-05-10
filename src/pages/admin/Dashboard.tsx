@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Home, Users, DollarSign, PieChart, LogOut, 
-  Plus, Calendar, ListChecks, MessageSquare 
+  Plus, Calendar, ListChecks, MessageSquare, Upload
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -61,6 +61,7 @@ const propertySchema = z.object({
   size: z.coerce.number().min(100, "Size must be at least 100 sq ft"),
   status: z.enum(["For Sale", "For Rent", "Sold", "Rented"]),
   agentId: z.number(),
+  images: z.array(z.string()).optional(),
 });
 
 const AdminDashboard: React.FC = () => {
@@ -71,6 +72,7 @@ const AdminDashboard: React.FC = () => {
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [propertyDialogOpen, setPropertyDialogOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<number | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   
   const taskForm = useForm<z.infer<typeof taskSchema>>({
     resolver: zodResolver(taskSchema),
@@ -97,6 +99,7 @@ const AdminDashboard: React.FC = () => {
       size: 0,
       status: "For Sale",
       agentId: agents[0]?.id,
+      images: [],
     },
   });
   
@@ -135,14 +138,40 @@ const AdminDashboard: React.FC = () => {
     taskForm.reset();
   };
   
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    // In a real application, we would upload these files to a server
+    // For this demo, we'll create object URLs for the selected files
+    const newImages = Array.from(files).map(file => URL.createObjectURL(file));
+    setUploadedImages([...uploadedImages, ...newImages]);
+    
+    // Update the form with the new image URLs
+    propertyForm.setValue('images', [...uploadedImages, ...newImages]);
+    
+    toast({
+      title: "Images Uploaded",
+      description: `${files.length} image(s) uploaded successfully.`,
+    });
+  };
+  
   const handleCreateProperty = (values: z.infer<typeof propertySchema>) => {
     // In a real app, this would call an API
+    const newProperty = {
+      ...values,
+      images: uploadedImages,
+      id: properties.length + 1,
+    };
+    
     toast({
       title: "Property Created",
       description: `New property "${values.title}" has been created and assigned to ${agents.find(a => a.id === values.agentId)?.name}`,
     });
     
+    // Reset form and uploaded images
     setPropertyDialogOpen(false);
+    setUploadedImages([]);
     propertyForm.reset();
   };
 
@@ -174,7 +203,7 @@ const AdminDashboard: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h2 className="text-xl font-bold text-navy dark:text-white mb-4">Welcome back, {user?.name}!</h2>
-          <p className="text-charcoal/80 dark:text-gray-300">
+          <p className="text-gray-700 dark:text-gray-300">
             Here's an overview of your real estate portfolio and performance.
           </p>
         </div>
@@ -467,6 +496,40 @@ const AdminDashboard: React.FC = () => {
                       )}
                     />
                   </div>
+
+                  {/* Image Upload Section */}
+                  <FormItem>
+                    <FormLabel className="dark:text-white">Property Images</FormLabel>
+                    <div className="flex items-center space-x-2">
+                      <Input 
+                        id="property-images" 
+                        type="file" 
+                        accept="image/*" 
+                        multiple 
+                        onChange={handleImageUpload} 
+                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                      />
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => document.getElementById('property-images')?.click()}
+                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload
+                      </Button>
+                    </div>
+                    {uploadedImages.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {uploadedImages.map((img, idx) => (
+                          <div key={idx} className="relative w-16 h-16 border rounded overflow-hidden">
+                            <img src={img} alt={`Uploaded ${idx}`} className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <FormMessage />
+                  </FormItem>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <FormField

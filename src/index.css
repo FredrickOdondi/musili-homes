@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,7 +96,60 @@
     @apply border-border;
   }
 
+  html {
+    @apply overflow-x-hidden scroll-smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Ensure text visibility in both themes */
+  .text-neutral {
+    @apply text-gray-900 dark:text-white;
+  }
+  
+  .text-subtle {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+  
+  .bg-neutral {
+    @apply bg-white dark:bg-gray-800;
+  }
+}
+
+/* Card and dialog styling for better theme support */
+.card-themed {
+  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-700;
+}
+
+.dialog-themed {
+  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white;
+}
+
+/* Form element styling for proper theme integration */
+.input-themed {
+  @apply bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600;
+}
+
+/* Button styling for proper contrast */
+.btn-primary-themed {
+  @apply bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white;
+}
+
+.btn-secondary-themed {
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white;
+}
+
+.btn-outline-themed {
+  @apply border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700;
+}
+
+/* Message colors for better visibility */
+.message-sent {
+  @apply bg-blue-500 text-white;
+}
+
+.message-received {
+  @apply bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white;
 }
