@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Bot } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 
 const AIAssistantSection: React.FC = () => {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,13 +28,19 @@ const AIAssistantSection: React.FC = () => {
         "The average price for properties in that area is around 200-250 million KES."
       ];
       
-      setResponse(responses[Math.floor(Math.random() * responses.length)]);
+      const aiResponse = responses[Math.floor(Math.random() * responses.length)];
+      setResponse(aiResponse);
       setIsLoading(false);
+      
+      toast({
+        title: "AI Assistant",
+        description: "Response generated successfully.",
+      });
     }, 1500);
   };
   
   return (
-    <div className="py-20 bg-navy text-white">
+    <div className="py-20 bg-navy text-white dark:bg-gray-800">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-2">AI Property Assistant</h2>
@@ -43,19 +51,19 @@ const AIAssistantSection: React.FC = () => {
         </div>
         
         <div className="max-w-3xl mx-auto">
-          <Card className="p-6 bg-white/5 backdrop-blur-sm rounded-lg shadow-lg">
+          <Card className="p-6 bg-white/5 backdrop-blur-sm rounded-lg shadow-lg dark:bg-gray-700/50">
             <div className="flex items-start space-x-4 mb-6">
               <div className="bg-gold p-3 rounded-full">
-                <Bot className="h-6 w-6 text-navy" />
+                <Bot className="h-6 w-6 text-navy dark:text-gray-800" />
               </div>
               <div>
                 <h3 className="font-bold text-xl">Property Assistant</h3>
-                <p className="text-white/80">Ask me anything about our properties</p>
+                <p className="text-white/80 dark:text-white/90">Ask me anything about our properties</p>
               </div>
             </div>
             
             {response && (
-              <div className="mb-6 p-4 rounded-lg bg-white/10">
+              <div className="mb-6 p-4 rounded-lg bg-white/10 dark:bg-gray-600/50">
                 <p className="text-white">{response}</p>
               </div>
             )}
@@ -65,11 +73,11 @@ const AIAssistantSection: React.FC = () => {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Ask about properties, locations, or prices..."
-                className="flex-grow bg-white/20 border-white/20 text-white placeholder:text-white/50"
+                className="flex-grow bg-white/20 border-white/20 text-white placeholder:text-white/50 dark:bg-gray-600/50 dark:border-gray-500/50"
               />
               <Button 
                 type="submit" 
-                className="bg-gold text-navy hover:bg-gold/90"
+                className="bg-gold text-navy hover:bg-gold/90 dark:text-gray-800"
                 disabled={isLoading}
               >
                 {isLoading ? "Thinking..." : "Ask"}

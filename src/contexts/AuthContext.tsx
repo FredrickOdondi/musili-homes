@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { getUserByEmail, authenticate } from '@/data/agents';
 
 interface User {
   id: number;
@@ -20,24 +21,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Mock user data
-const mockUsers = [
-  {
-    id: 1,
-    name: "Admin User",
-    email: "admin@musili.co.ke",
-    password: "admin123",
-    role: "admin" as const
-  },
-  {
-    id: 2,
-    name: "Sarah Kimani",
-    email: "sarah@musili.co.ke",
-    password: "agent123",
-    role: "agent" as const
-  }
-];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -62,9 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       // Simple mock authentication
-      const authenticatedUser = mockUsers.find(
-        u => u.email === email && u.password === password
-      );
+      const authenticatedUser = authenticate(email, password);
       
       if (authenticatedUser) {
         const { password: _, ...userWithoutPassword } = authenticatedUser;
