@@ -227,12 +227,13 @@
   @apply text-white;
 }
 
+/* Fix the circular dependency by directly using rgba instead of @apply */
 #ai-assistant .bg-white\/5 {
-  @apply bg-white/5;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .dark #ai-assistant .bg-white\/5 {
-  @apply bg-gray-700/50;
+  background-color: rgba(55, 65, 81, 0.5); /* Equivalent to bg-gray-700/50 */
 }
 
 #ai-assistant input::placeholder {
