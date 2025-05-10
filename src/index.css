@@ -36,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -108,43 +101,79 @@
 
   /* Ensure text visibility in both themes */
   .text-neutral {
-    @apply text-gray-900 dark:text-white;
+    @apply text-gray-900;
+  }
+  
+  .dark .text-neutral {
+    @apply text-white;
   }
   
   .text-subtle {
-    @apply text-gray-700 dark:text-gray-300;
+    @apply text-gray-700;
+  }
+  
+  .dark .text-subtle {
+    @apply text-gray-300;
   }
   
   .bg-neutral {
-    @apply bg-white dark:bg-gray-800;
+    @apply bg-white;
+  }
+  
+  .dark .bg-neutral {
+    @apply bg-gray-800;
   }
 }
 
 /* Card and dialog styling for better theme support */
 .card-themed {
-  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-700;
+  @apply bg-white border border-gray-100 text-gray-900;
+}
+
+.dark .card-themed {
+  @apply bg-gray-800 border-gray-700 text-white;
 }
 
 .dialog-themed {
-  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white;
+  @apply bg-white text-gray-900;
+}
+
+.dark .dialog-themed {
+  @apply bg-gray-800 text-white;
 }
 
 /* Form element styling for proper theme integration */
 .input-themed {
-  @apply bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600;
+  @apply bg-white text-gray-900 border border-gray-200;
+}
+
+.dark .input-themed {
+  @apply bg-gray-700 text-white border-gray-600;
 }
 
 /* Button styling for proper contrast */
 .btn-primary-themed {
-  @apply bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white;
+  @apply bg-blue-600 hover:bg-blue-700 text-white;
+}
+
+.dark .btn-primary-themed {
+  @apply bg-blue-500 hover:bg-blue-600 text-white;
 }
 
 .btn-secondary-themed {
-  @apply bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white;
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-800;
+}
+
+.dark .btn-secondary-themed {
+  @apply bg-gray-700 hover:bg-gray-600 text-white;
 }
 
 .btn-outline-themed {
-  @apply border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700;
+  @apply border border-gray-300 text-gray-700 hover:bg-gray-100;
+}
+
+.dark .btn-outline-themed {
+  @apply border-gray-600 text-gray-300 hover:bg-gray-700;
 }
 
 /* Message colors for better visibility */
@@ -153,49 +182,72 @@
 }
 
 .message-received {
-  @apply bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white;
+  @apply bg-gray-200 text-gray-800;
+}
+
+.dark .message-received {
+  @apply bg-gray-700 text-white;
 }
 
 /* Fix for specific components with visibility issues */
 .bg-navy {
-  @apply bg-blue-900 dark:bg-blue-900;
+  @apply bg-blue-900;
+}
+
+.dark .bg-navy {
+  @apply bg-blue-900;
 }
 
 .text-navy {
-  @apply text-blue-900 dark:text-blue-900;
+  @apply text-blue-900;
+}
+
+.dark .text-navy {
+  @apply text-blue-900;
 }
 
 .bg-gold {
-  @apply bg-yellow-500 dark:bg-yellow-500;
+  @apply bg-yellow-500;
+}
+
+.dark .bg-gold {
+  @apply bg-yellow-500;
 }
 
 .text-gold {
-  @apply text-yellow-500 dark:text-yellow-500;
+  @apply text-yellow-500;
 }
 
-/* Fix for contact buttons and other elements with visibility issues */
-.text-white {
-  @apply dark:text-white;
+.dark .text-gold {
+  @apply text-yellow-500;
 }
 
-/* AIAssistantSection specific fixes */
+/* Fix for AI Assistant and other components */
 #ai-assistant {
-  @apply text-white dark:text-white;
-}
-
-#ai-assistant .text-white {
-  @apply text-white dark:text-white;
+  @apply text-white;
 }
 
 #ai-assistant .bg-white\/5 {
-  @apply bg-white/5 dark:bg-gray-700/50;
+  @apply bg-white/5;
+}
+
+.dark #ai-assistant .bg-white\/5 {
+  @apply bg-gray-700/50;
 }
 
 #ai-assistant input::placeholder {
-  @apply text-white/50 dark:text-white/50;
+  @apply text-white/50;
+}
+
+.dark #ai-assistant input::placeholder {
+  @apply text-white/50;
 }
 
 /* Contact button fixes */
 .hero-button {
-  @apply text-gray-800 dark:text-white border-gray-800 dark:border-white hover:bg-gray-100 dark:hover:bg-white/10;
+  @apply text-gray-800 border-gray-800 hover:bg-gray-100;
+}
+
+.dark .hero-button {
+  @apply text-white border-white hover:bg-white/10;
 }
