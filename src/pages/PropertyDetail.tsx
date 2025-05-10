@@ -7,13 +7,15 @@ import { formatCurrency } from '@/lib/utils';
 import { Property, Agent } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Bed, Bath, Maximize2, MapPin, Phone, Mail } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import ContactAgentForm from '@/components/properties/ContactAgentForm';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<Property | null>(null);
   const [agent, setAgent] = useState<Agent | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
+  const [showContactForm, setShowContactForm] = useState(false);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -45,14 +47,15 @@ const PropertyDetail: React.FC = () => {
   }
   
   const handleContactAgent = () => {
-    toast({
-      title: "Request Sent",
-      description: "The agent will contact you shortly. Thank you for your interest!",
-    });
+    setShowContactForm(true);
+  };
+
+  const handleRequestViewing = () => {
+    setShowContactForm(true);
   };
 
   return (
-    <div className="min-h-screen bg-offWhite pb-12">
+    <div className="min-h-screen bg-offWhite dark:bg-gray-900 pb-12">
       <div className="bg-navy py-12">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
@@ -74,7 +77,7 @@ const PropertyDetail: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {/* Main image */}
-            <div className="bg-white p-2 rounded-lg shadow-md mb-4">
+            <div className="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-md mb-4">
               <div className="aspect-video rounded overflow-hidden">
                 <img 
                   src={activeImage} 
@@ -104,33 +107,33 @@ const PropertyDetail: React.FC = () => {
             </div>
             
             {/* Property details */}
-            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-8">
               <h2 className="text-2xl font-bold text-navy mb-4">Property Details</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="flex flex-col items-center p-4 bg-offWhite rounded-lg">
+                <div className="flex flex-col items-center p-4 bg-offWhite dark:bg-gray-700 rounded-lg">
                   <Bed className="h-6 w-6 text-gold mb-2" />
-                  <span className="text-sm text-charcoal/70">Bedrooms</span>
+                  <span className="text-sm text-charcoal/70 dark:text-gray-300">Bedrooms</span>
                   <span className="text-xl font-bold text-navy">{property.bedrooms}</span>
                 </div>
-                <div className="flex flex-col items-center p-4 bg-offWhite rounded-lg">
+                <div className="flex flex-col items-center p-4 bg-offWhite dark:bg-gray-700 rounded-lg">
                   <Bath className="h-6 w-6 text-gold mb-2" />
-                  <span className="text-sm text-charcoal/70">Bathrooms</span>
+                  <span className="text-sm text-charcoal/70 dark:text-gray-300">Bathrooms</span>
                   <span className="text-xl font-bold text-navy">{property.bathrooms}</span>
                 </div>
-                <div className="flex flex-col items-center p-4 bg-offWhite rounded-lg">
+                <div className="flex flex-col items-center p-4 bg-offWhite dark:bg-gray-700 rounded-lg">
                   <Maximize2 className="h-6 w-6 text-gold mb-2" />
-                  <span className="text-sm text-charcoal/70">Area</span>
+                  <span className="text-sm text-charcoal/70 dark:text-gray-300">Area</span>
                   <span className="text-xl font-bold text-navy">{property.size} sqft</span>
                 </div>
-                <div className="flex flex-col items-center p-4 bg-offWhite rounded-lg">
+                <div className="flex flex-col items-center p-4 bg-offWhite dark:bg-gray-700 rounded-lg">
                   <MapPin className="h-6 w-6 text-gold mb-2" />
-                  <span className="text-sm text-charcoal/70">Location</span>
+                  <span className="text-sm text-charcoal/70 dark:text-gray-300">Location</span>
                   <span className="text-xl font-bold text-navy">{property.location}</span>
                 </div>
               </div>
               
               <h3 className="text-xl font-bold text-navy mb-2">Description</h3>
-              <p className="text-charcoal/80 mb-6">
+              <p className="text-charcoal/80 dark:text-gray-300 mb-6">
                 {property.description}
               </p>
             </div>
@@ -140,29 +143,25 @@ const PropertyDetail: React.FC = () => {
           <div className="lg:col-span-1">
             {/* Agent info */}
             {agent && (
-              <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
                 <h3 className="text-xl font-bold text-navy mb-4">Property Agent</h3>
                 <div className="flex items-center mb-4">
-                  <div className="w-16 h-16 rounded-full overflow-hidden mr-4">
-                    <img 
-                      src={agent.photo} 
-                      alt={agent.name} 
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 text-xl font-bold overflow-hidden mr-4">
+                    {agent.name.charAt(0)}
                   </div>
                   <div>
-                    <h4 className="font-bold text-navy">{agent.name}</h4>
-                    <p className="text-sm text-charcoal/70">Luxury Property Specialist</p>
+                    <h4 className="font-bold text-navy dark:text-white">{agent.name}</h4>
+                    <p className="text-sm text-charcoal/70 dark:text-gray-300">Luxury Property Specialist</p>
                   </div>
                 </div>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center">
                     <Phone className="h-4 w-4 mr-2 text-gold" />
-                    <span className="text-sm">{agent.phone}</span>
+                    <span className="text-sm dark:text-gray-300">{agent.phone}</span>
                   </div>
                   <div className="flex items-center">
                     <Mail className="h-4 w-4 mr-2 text-gold" />
-                    <span className="text-sm">{agent.email}</span>
+                    <span className="text-sm dark:text-gray-300">{agent.email}</span>
                   </div>
                 </div>
                 <Button 
@@ -175,13 +174,13 @@ const PropertyDetail: React.FC = () => {
             )}
             
             {/* Request viewing */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold text-navy mb-4">Schedule a Viewing</h3>
-              <p className="text-charcoal/80 mb-4">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h3 className="text-xl font-bold text-navy dark:text-white mb-4">Schedule a Viewing</h3>
+              <p className="text-charcoal/80 dark:text-gray-300 mb-4">
                 Interested in this property? Schedule a viewing at your convenience.
               </p>
               <Button 
-                onClick={handleContactAgent}
+                onClick={handleRequestViewing}
                 className="w-full bg-navy text-white hover:bg-navy/90"
               >
                 Request Viewing
@@ -190,6 +189,16 @@ const PropertyDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Contact Agent Form Dialog */}
+      {property && (
+        <ContactAgentForm
+          agent={agent}
+          property={property}
+          isOpen={showContactForm}
+          onClose={() => setShowContactForm(false)}
+        />
+      )}
     </div>
   );
 };
