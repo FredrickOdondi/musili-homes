@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { globalMessages } from '@/components/properties/ContactAgentForm';
 
 interface Message {
   id: number;
@@ -13,6 +14,15 @@ interface Message {
   content: string;
   timestamp: string;
   read: boolean;
+  clientInfo?: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  propertyInfo?: {
+    id: number;
+    title: string;
+  };
 }
 
 interface User {
@@ -26,33 +36,36 @@ interface MessagePanelProps {
   recipient: User;
 }
 
-// This would be replaced with a real database in a production app
-const globalMessages: Message[] = [
-  {
-    id: 1,
-    senderId: 1, // Admin
-    receiverId: 2, // Agent
-    content: "Hi Sarah, I've assigned a new property to you for showing this weekend.",
-    timestamp: "2024-05-09T10:30:00",
-    read: true
-  },
-  {
-    id: 2,
-    senderId: 2, // Agent
-    receiverId: 1, // Admin
-    content: "Thanks, I'll review the details and prepare for the showing.",
-    timestamp: "2024-05-09T10:35:00",
-    read: true
-  },
-  {
-    id: 3,
-    senderId: 1, // Admin
-    receiverId: 2, // Agent
-    content: "Great! The client is very interested in lakefront properties.",
-    timestamp: "2024-05-09T10:37:00",
-    read: true
-  }
-];
+// Initialize with some default messages if globalMessages is empty
+if (!globalMessages.length) {
+  // Add sample messages
+  globalMessages.push(
+    {
+      id: 1,
+      senderId: 1, // Admin
+      receiverId: 2, // Agent
+      content: "Hi Sarah, I've assigned a new property to you for showing this weekend.",
+      timestamp: "2024-05-09T10:30:00",
+      read: true
+    },
+    {
+      id: 2,
+      senderId: 2, // Agent
+      receiverId: 1, // Admin
+      content: "Thanks, I'll review the details and prepare for the showing.",
+      timestamp: "2024-05-09T10:35:00",
+      read: true
+    },
+    {
+      id: 3,
+      senderId: 1, // Admin
+      receiverId: 2, // Agent
+      content: "Great! The client is very interested in lakefront properties.",
+      timestamp: "2024-05-09T10:37:00",
+      read: true
+    }
+  );
+}
 
 const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -61,12 +74,28 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
 
   // Load messages for the current conversation
   useEffect(() => {
+    // Filter messages for this conversation (between currentUser and recipient)
     const conversationMessages = globalMessages.filter(msg => 
       (msg.senderId === currentUser.id && msg.receiverId === recipient.id) || 
-      (msg.receiverId === currentUser.id && msg.senderId === recipient.id)
+      (msg.receiverId === currentUser.id && msg.senderId === recipient.id) ||
+      // Also include messages from clients (senderId: 0) to this agent
+      (msg.receiverId === currentUser.id && msg.senderId === 0)
     );
-    setMessages(conversationMessages);
-  }, [currentUser.id, recipient.id]);
+    
+    // Sort messages by timestamp
+    const sortedMessages = [...conversationMessages].sort((a, b) => 
+      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    );
+    
+    setMessages(sortedMessages);
+    
+    // Mark unread messages as read
+    sortedMessages.forEach(msg => {
+      if (msg.receiverId === currentUser.id && !msg.read) {
+        msg.read = true;
+      }
+    });
+  }, [currentUser.id, recipient.id, globalMessages]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +111,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
       read: false
     };
 
-    // Add to global messages (this would be a database call in a real app)
+    // Add to global messages
     globalMessages.push(message);
     
     // Update local state
@@ -93,6 +122,21 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
       title: "Message Sent",
       description: `Message sent to ${recipient.name}`
     });
+  };
+
+  // Helper function to format client messages nicely
+  const formatClientMessage = (message: Message) => {
+    if (message.clientInfo) {
+      return (
+        <div>
+          <div className="font-bold text-white mb-1">
+            Client Inquiry: {message.clientInfo.name}
+          </div>
+          <div className="whitespace-pre-line">{message.content}</div>
+        </div>
+      );
+    }
+    return <div>{message.content}</div>;
   };
 
   return (
@@ -115,7 +159,11 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ currentUser, recipient }) =
               'ml-auto bg-blue-500 text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg' : 
               'mr-auto bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-tl-lg rounded-tr-lg rounded-br-lg'} p-3`}
           >
-            <p>{message.content}</p>
+            {message.senderId === 0 ? (
+              formatClientMessage(message)
+            ) : (
+              <p>{message.content}</p>
+            )}
             <span className="text-xs opacity-70 block text-right">
               {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>

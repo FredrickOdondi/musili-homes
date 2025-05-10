@@ -40,6 +40,10 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+// This would be replaced with a real database in a production app
+// Shared message storage to be accessible from both MessagePanel and ContactAgentForm
+export const globalMessages = [];
+
 const ContactAgentForm: React.FC<ContactAgentFormProps> = ({ agent, property, isOpen, onClose }) => {
   const { toast } = useToast();
   
@@ -54,7 +58,43 @@ const ContactAgentForm: React.FC<ContactAgentFormProps> = ({ agent, property, is
   });
 
   const onSubmit = (data: FormValues) => {
-    // In a real app, this would send the data to a backend API
+    if (!agent) {
+      toast({
+        title: "Error",
+        description: "No agent assigned to this property",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create new message to be sent to agent
+    const message = {
+      id: Date.now(), // Simple ID generation
+      senderId: 0, // 0 represents client/guest users
+      receiverId: agent.id,
+      content: `
+        Inquiry about: ${property.title}
+        From: ${data.name}
+        Email: ${data.email}
+        Phone: ${data.phone}
+        Message: ${data.message}
+      `,
+      timestamp: new Date().toISOString(),
+      read: false,
+      clientInfo: {
+        name: data.name,
+        email: data.email,
+        phone: data.phone
+      },
+      propertyInfo: {
+        id: property.id,
+        title: property.title
+      }
+    };
+
+    // Add message to global messages array
+    globalMessages.push(message);
+    
     console.log('Form submitted:', data);
     console.log('Property:', property.id);
     console.log('Agent:', agent?.id);

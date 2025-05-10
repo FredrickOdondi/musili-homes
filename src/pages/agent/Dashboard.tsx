@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from '@/hooks/use-toast';
 import MessagePanel from '@/components/messaging/MessagePanel';
+import ClientList from '@/components/messaging/ClientList';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const AgentDashboard: React.FC = () => {
@@ -21,6 +22,11 @@ const AgentDashboard: React.FC = () => {
   const { toast } = useToast();
   const [agentProperties, setAgentProperties] = React.useState<Property[]>([]);
   const [agentTasks, setAgentTasks] = React.useState<typeof tasks>([]);
+  const [activeContact, setActiveContact] = useState<{id: number; name: string; role: 'admin' | 'client'}>({
+    id: 1, 
+    name: "John Musili", 
+    role: "admin"
+  });
   
   // Redirect if not agent
   React.useEffect(() => {
@@ -59,19 +65,28 @@ const AgentDashboard: React.FC = () => {
     }
   };
 
+  const handleSelectClient = (clientId: number, clientName: string) => {
+    setActiveContact({
+      id: clientId,
+      name: clientName,
+      role: "client"
+    });
+  };
+
+  const handleSelectAdmin = () => {
+    setActiveContact({
+      id: 1,
+      name: "John Musili",
+      role: "admin"
+    });
+  };
+
   // Calculate dashboard statistics
   const totalProperties = agentProperties.length;
   const totalValue = agentProperties.reduce((sum, property) => sum + property.price, 0);
   const totalInquiries = Math.floor(Math.random() * 15) + 5; // Simulated data
   const pendingTasks = agentTasks.filter(t => t.status !== 'Completed').length;
   
-  // Admin user for messaging
-  const adminUser = {
-    id: 1,
-    name: "John Musili",
-    role: "admin" as const
-  };
-
   return (
     <div className="min-h-screen bg-offWhite dark:bg-gray-900">
       <div className="bg-navy py-6 dark:bg-gray-800">
@@ -270,25 +285,40 @@ const AgentDashboard: React.FC = () => {
             <h3 className="text-xl font-bold text-navy dark:text-white mb-4">Messages</h3>
             
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              <div className="lg:col-span-1">
-                <Card className="p-4 dark:bg-gray-700">
-                  <h4 className="font-bold text-lg mb-3 dark:text-white">Contacts</h4>
-                  <div className="flex items-center gap-3 p-2 bg-gray-100 dark:bg-gray-600 rounded-lg cursor-pointer">
-                    <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                      <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium dark:text-white">Admin</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">John Musili</p>
-                    </div>
+              <div className="lg:col-span-1 space-y-4">
+                {/* Admin contact */}
+                <div 
+                  className={`flex items-center gap-3 p-2 ${
+                    activeContact.role === 'admin' 
+                    ? 'bg-blue-100 dark:bg-blue-900' 
+                    : 'bg-gray-100 dark:bg-gray-600'
+                  } rounded-lg cursor-pointer`}
+                  onClick={handleSelectAdmin}
+                >
+                  <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
+                    <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
-                </Card>
+                  <div>
+                    <p className="font-medium dark:text-white">Admin</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">John Musili</p>
+                  </div>
+                </div>
+                
+                {/* Client list */}
+                <ClientList 
+                  agentId={user.id} 
+                  onSelectClient={handleSelectClient} 
+                />
               </div>
               
               <div className="lg:col-span-3">
                 <MessagePanel 
                   currentUser={{ id: user.id, name: user.name, role: 'agent' }}
-                  recipient={adminUser}
+                  recipient={
+                    activeContact.role === 'admin'
+                      ? { id: activeContact.id, name: activeContact.name, role: 'admin' }
+                      : { id: activeContact.id, name: activeContact.name, role: 'agent' } // Using 'agent' role as a placeholder
+                  }
                 />
               </div>
             </div>
