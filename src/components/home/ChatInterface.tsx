@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Bot, Send, User } from 'lucide-react';
+import { Bot, Send, User, Bell } from 'lucide-react';
 import { propertyAI } from '@/services/aiService';
 
 interface ChatMessage {
@@ -10,6 +10,7 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  isNotification?: boolean;
 }
 
 interface ChatInterfaceProps {
@@ -21,7 +22,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
     {
       id: '1',
       role: 'assistant',
-      content: "Hello! I'm your AI Property Assistant. I can help you with information about our luxury properties, pricing, locations, and connect you with our agents. What would you like to know?",
+      content: "Hello! I'm your AI Property Assistant. I can help you with information about our luxury properties, pricing, locations, and even help you schedule property viewings with our agents. What would you like to know?",
       timestamp: new Date()
     }
   ]);
@@ -60,7 +61,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: aiResponse,
-        timestamp: new Date()
+        timestamp: new Date(),
+        isNotification: aiResponse.includes('notified') || aiResponse.includes('Next Steps')
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -73,7 +75,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "I apologize, but I'm having trouble processing your request right now. Please try asking about our properties, pricing, or locations, and I'll do my best to help!",
+        content: "I apologize, but I'm having trouble processing your request right now. Please try asking about our properties, pricing, locations, or scheduling viewings, and I'll do my best to help!",
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -88,10 +90,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
       .split('\n')
       .map((line, index) => {
         if (line.startsWith('**') && line.endsWith('**')) {
-          return <div key={index} className="font-bold mb-1">{line.slice(2, -2)}</div>;
+          return <div key={index} className="font-bold mb-1 text-gold">{line.slice(2, -2)}</div>;
         }
         if (line.startsWith('• ')) {
           return <div key={index} className="ml-4 mb-1">{line}</div>;
+        }
+        if (line.includes('**') && !line.startsWith('**')) {
+          // Handle inline bold text
+          const parts = line.split('**');
+          return (
+            <div key={index} className="mb-1">
+              {parts.map((part, partIndex) => 
+                partIndex % 2 === 1 ? 
+                  <span key={partIndex} className="font-bold text-gold">{part}</span> : 
+                  part
+              )}
+            </div>
+          );
         }
         return line && <div key={index} className="mb-1">{line}</div>;
       });
@@ -107,8 +122,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
             className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             {message.role === 'assistant' && (
-              <div className="bg-gold p-2 rounded-full flex-shrink-0">
-                <Bot className="h-4 w-4 text-gray-900" />
+              <div className={`p-2 rounded-full flex-shrink-0 ${
+                message.isNotification ? 'bg-green-500' : 'bg-gold'
+              }`}>
+                {message.isNotification ? (
+                  <Bell className="h-4 w-4 text-white" />
+                ) : (
+                  <Bot className="h-4 w-4 text-gray-900" />
+                )}
               </div>
             )}
             
@@ -116,6 +137,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
               className={`max-w-[80%] p-3 rounded-lg ${
                 message.role === 'user'
                   ? 'bg-blue-500 text-white rounded-br-sm'
+                  : message.isNotification
+                  ? 'bg-green-500/20 text-white border border-green-500/30 rounded-bl-sm'
                   : 'bg-white/10 text-white rounded-bl-sm'
               }`}
             >
@@ -158,7 +181,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
         <Input
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Ask about properties, prices, locations..."
+          placeholder="Ask about properties, schedule viewings, get pricing info..."
           className="flex-grow bg-white/20 border-white/20 text-white placeholder:text-white/50"
           disabled={isLoading}
         />
