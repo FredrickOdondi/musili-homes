@@ -5,82 +5,79 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Pure White - Primary Background */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 0 0% 17%; /* #2B2B2B - Deep Charcoal */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Soft Ivory - Secondary Background */
+    --card: 34 28% 96%; /* #F8F1E9 */
+    --card-foreground: 0 0% 17%; /* #2B2B2B */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%; /* #FFFFFF */
+    --popover-foreground: 0 0% 17%; /* #2B2B2B */
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Gold Whisper - Highlight */
+    --primary: 45 85% 46%; /* #D4A017 */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Satin Silver - Accent */
+    --secondary: 0 0% 88%; /* #E0E0E0 */
+    --secondary-foreground: 0 0% 17%; /* #2B2B2B */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 88%; /* #E0E0E0 */
+    --muted-foreground: 0 0% 45%; /* #737373 */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 34 28% 96%; /* #F8F1E9 */
+    --accent-foreground: 0 0% 17%; /* #2B2B2B */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Soft Crimson - Error/Alert */
+    --destructive: 354 70% 54%; /* #E63946 */
+    --destructive-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 0 0% 88%; /* #E0E0E0 */
+    --input: 0 0% 88%; /* #E0E0E0 */
+    --ring: 45 85% 46%; /* #D4A017 */
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Custom luxury colors */
+    --pure-white: 0 0% 100%; /* #FFFFFF */
+    --soft-ivory: 34 28% 96%; /* #F8F1E9 */
+    --satin-silver: 0 0% 88%; /* #E0E0E0 */
+    --deep-charcoal: 0 0% 17%; /* #2B2B2B */
+    --gold-whisper: 45 85% 46%; /* #D4A017 */
+    --soft-crimson: 354 70% 54%; /* #E63946 */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark theme adjustments */
+    --background: 0 0% 17%; /* #2B2B2B */
+    --foreground: 0 0% 100%; /* #FFFFFF */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 20%; /* Slightly lighter than background */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 17%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 45 85% 46%; /* Keep gold accent */
+    --primary-foreground: 0 0% 17%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 25%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 0 0% 25%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 0 0% 25%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 354 70% 54%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 45 85% 46%;
   }
 }
 
@@ -99,156 +96,96 @@
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'San Francisco', system-ui, sans-serif;
   }
 
-  /* Ensure text visibility in both themes */
-  .text-neutral {
-    @apply text-gray-900;
+  /* Luxury color utility classes */
+  .bg-pure-white {
+    background-color: hsl(var(--pure-white));
   }
   
-  .dark .text-neutral {
-    @apply text-white;
+  .bg-soft-ivory {
+    background-color: hsl(var(--soft-ivory));
   }
   
-  .text-subtle {
-    @apply text-gray-700;
+  .bg-satin-silver {
+    background-color: hsl(var(--satin-silver));
   }
   
-  .dark .text-subtle {
-    @apply text-gray-300;
+  .bg-deep-charcoal {
+    background-color: hsl(var(--deep-charcoal));
   }
   
-  .bg-neutral {
-    @apply bg-white;
+  .bg-gold-whisper {
+    background-color: hsl(var(--gold-whisper));
   }
   
-  .dark .bg-neutral {
-    @apply bg-gray-800;
+  .text-pure-white {
+    color: hsl(var(--pure-white));
+  }
+  
+  .text-soft-ivory {
+    color: hsl(var(--soft-ivory));
+  }
+  
+  .text-satin-silver {
+    color: hsl(var(--satin-silver));
+  }
+  
+  .text-deep-charcoal {
+    color: hsl(var(--deep-charcoal));
+  }
+  
+  .text-gold-whisper {
+    color: hsl(var(--gold-whisper));
+  }
+  
+  .border-satin-silver {
+    border-color: hsl(var(--satin-silver));
+  }
+  
+  .border-gold-whisper {
+    border-color: hsl(var(--gold-whisper));
+  }
+
+  /* Enhanced luxury styling */
+  .luxury-card {
+    @apply bg-pure-white border border-satin-silver text-deep-charcoal shadow-sm;
+  }
+
+  .dark .luxury-card {
+    @apply bg-card border-border text-card-foreground;
+  }
+
+  .luxury-button-primary {
+    @apply bg-gold-whisper text-pure-white hover:opacity-90 transition-all duration-300;
+  }
+
+  .luxury-button-secondary {
+    @apply border border-satin-silver text-deep-charcoal hover:bg-soft-ivory transition-all duration-300;
+  }
+
+  .dark .luxury-button-secondary {
+    @apply border-border text-foreground hover:bg-accent;
+  }
+
+  /* Typography enhancements */
+  .luxury-heading {
+    @apply text-deep-charcoal font-thin tracking-wide;
+  }
+
+  .dark .luxury-heading {
+    @apply text-foreground;
+  }
+
+  .luxury-text {
+    @apply text-deep-charcoal/80 font-light;
+  }
+
+  .dark .luxury-text {
+    @apply text-foreground/80;
+  }
+
+  .luxury-accent {
+    @apply text-gold-whisper;
   }
 }
 
-/* Card and dialog styling for better theme support */
-.card-themed {
-  @apply bg-white border border-gray-100 text-gray-900;
-}
-
-.dark .card-themed {
-  @apply bg-gray-800 border-gray-700 text-white;
-}
-
-.dialog-themed {
-  @apply bg-white text-gray-900;
-}
-
-.dark .dialog-themed {
-  @apply bg-gray-800 text-white;
-}
-
-/* Form element styling for proper theme integration */
-.input-themed {
-  @apply bg-white text-gray-900 border border-gray-200;
-}
-
-.dark .input-themed {
-  @apply bg-gray-700 text-white border-gray-600;
-}
-
-/* Button styling for proper contrast */
-.btn-primary-themed {
-  @apply bg-blue-600 hover:bg-blue-700 text-white;
-}
-
-.dark .btn-primary-themed {
-  @apply bg-blue-500 hover:bg-blue-600 text-white;
-}
-
-.btn-secondary-themed {
-  @apply bg-gray-200 hover:bg-gray-300 text-gray-800;
-}
-
-.dark .btn-secondary-themed {
-  @apply bg-gray-700 hover:bg-gray-600 text-white;
-}
-
-.btn-outline-themed {
-  @apply border border-gray-300 text-gray-700 hover:bg-gray-100;
-}
-
-.dark .btn-outline-themed {
-  @apply border-gray-600 text-gray-300 hover:bg-gray-700;
-}
-
-/* Message colors for better visibility */
-.message-sent {
-  @apply bg-blue-500 text-white;
-}
-
-.message-received {
-  @apply bg-gray-200 text-gray-800;
-}
-
-.dark .message-received {
-  @apply bg-gray-700 text-white;
-}
-
-/* Fix for specific components with visibility issues */
-.bg-navy {
-  @apply bg-blue-900;
-}
-
-.dark .bg-navy {
-  @apply bg-blue-900;
-}
-
-.text-navy {
-  @apply text-blue-900;
-}
-
-.dark .text-navy {
-  @apply text-blue-900;
-}
-
-.bg-gold {
-  @apply bg-yellow-500;
-}
-
-.dark .bg-gold {
-  @apply bg-yellow-500;
-}
-
-.text-gold {
-  @apply text-yellow-500;
-}
-
-.dark .text-gold {
-  @apply text-yellow-500;
-}
-
-/* Fix for AI Assistant and other components */
-#ai-assistant {
-  @apply text-white;
-}
-
-/* Fix the circular dependency by directly using rgba instead of @apply */
-#ai-assistant .bg-white\/5 {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.dark #ai-assistant .bg-white\/5 {
-  background-color: rgba(55, 65, 81, 0.5); /* Equivalent to bg-gray-700/50 */
-}
-
-#ai-assistant input::placeholder {
-  @apply text-white/50;
-}
-
-.dark #ai-assistant input::placeholder {
-  @apply text-white/50;
-}
-
-/* Contact button fixes */
-.hero-button {
-  @apply text-gray-800 border-gray-800 hover:bg-gray-100;
-}
-
-.dark .hero-button {
-  @apply text-white border-white hover:bg-white/10;
-}
+/* Remove the old color classes and theme overrides */

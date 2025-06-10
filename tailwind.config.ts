@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Luxury color palette
+				'pure-white': 'hsl(var(--pure-white))',
+				'soft-ivory': 'hsl(var(--soft-ivory))',
+				'satin-silver': 'hsl(var(--satin-silver))',
+				'deep-charcoal': 'hsl(var(--deep-charcoal))',
+				'gold-whisper': 'hsl(var(--gold-whisper))',
+				'soft-crimson': 'hsl(var(--soft-crimson))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -89,6 +97,9 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			fontFamily: {
+				'sans': ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'San Francisco', 'system-ui', 'sans-serif'],
 			}
 		}
 	},

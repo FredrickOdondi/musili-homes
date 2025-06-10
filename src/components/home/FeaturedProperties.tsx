@@ -8,12 +8,12 @@ const FeaturedProperties: React.FC = () => {
   const featuredProperties = getFeaturedProperties();
 
   return (
-    <section className="py-32 bg-white">
+    <section className="py-32 bg-pure-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-20">
-          <h2 className="text-5xl font-thin text-black mb-6 tracking-wide">Featured Collection</h2>
-          <div className="w-24 h-px bg-gold mx-auto mb-8"></div>
-          <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
+          <h2 className="text-5xl font-thin luxury-heading mb-6 tracking-wide">Featured Collection</h2>
+          <div className="w-24 h-px bg-gold-whisper mx-auto mb-8"></div>
+          <p className="text-xl luxury-text max-w-2xl mx-auto leading-relaxed">
             Handpicked selections from Kenya's most exceptional properties
           </p>
         </div>
@@ -27,7 +27,7 @@ const FeaturedProperties: React.FC = () => {
         <div className="text-center mt-20">
           <Link 
             to="/properties"
-            className="inline-block border border-black text-black hover:bg-black hover:text-white transition-all duration-300 px-12 py-4 font-light tracking-wide"
+            className="inline-block luxury-button-secondary px-12 py-4 font-light tracking-wide"
           >
             View All Properties
           </Link>

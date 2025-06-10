@@ -90,7 +90,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
       .split('\n')
       .map((line, index) => {
         if (line.startsWith('**') && line.endsWith('**')) {
-          return <div key={index} className="font-bold mb-1 text-gold">{line.slice(2, -2)}</div>;
+          return <div key={index} className="font-bold mb-1 text-gold-whisper">{line.slice(2, -2)}</div>;
         }
         if (line.startsWith('• ')) {
           return <div key={index} className="ml-4 mb-1">{line}</div>;
@@ -102,7 +102,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
             <div key={index} className="mb-1">
               {parts.map((part, partIndex) => 
                 partIndex % 2 === 1 ? 
-                  <span key={partIndex} className="font-bold text-gold">{part}</span> : 
+                  <span key={partIndex} className="font-bold text-gold-whisper">{part}</span> : 
                   part
               )}
             </div>
@@ -113,7 +113,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-pure-white">
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-96">
         {messages.map((message) => (
@@ -123,12 +123,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
           >
             {message.role === 'assistant' && (
               <div className={`p-2 rounded-full flex-shrink-0 ${
-                message.isNotification ? 'bg-green-500' : 'bg-gold'
+                message.isNotification ? 'bg-gold-whisper' : 'bg-gold-whisper'
               }`}>
                 {message.isNotification ? (
-                  <Bell className="h-4 w-4 text-white" />
+                  <Bell className="h-4 w-4 text-pure-white" />
                 ) : (
-                  <Bot className="h-4 w-4 text-gray-900" />
+                  <Bot className="h-4 w-4 text-pure-white" />
                 )}
               </div>
             )}
@@ -136,10 +136,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
             <div
               className={`max-w-[80%] p-3 rounded-lg ${
                 message.role === 'user'
-                  ? 'bg-blue-500 text-white rounded-br-sm'
+                  ? 'bg-gold-whisper text-pure-white rounded-br-sm'
                   : message.isNotification
-                  ? 'bg-green-500/20 text-white border border-green-500/30 rounded-bl-sm'
-                  : 'bg-white/10 text-white rounded-bl-sm'
+                  ? 'bg-soft-ivory text-deep-charcoal border border-gold-whisper/30 rounded-bl-sm'
+                  : 'bg-soft-ivory text-deep-charcoal rounded-bl-sm'
               }`}
             >
               <div className="text-sm leading-relaxed">
@@ -151,8 +151,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
             </div>
 
             {message.role === 'user' && (
-              <div className="bg-blue-500 p-2 rounded-full flex-shrink-0">
-                <User className="h-4 w-4 text-white" />
+              <div className="bg-gold-whisper p-2 rounded-full flex-shrink-0">
+                <User className="h-4 w-4 text-pure-white" />
               </div>
             )}
           </div>
@@ -160,14 +160,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
         
         {isLoading && (
           <div className="flex gap-3 justify-start">
-            <div className="bg-gold p-2 rounded-full">
-              <Bot className="h-4 w-4 text-gray-900" />
+            <div className="bg-gold-whisper p-2 rounded-full">
+              <Bot className="h-4 w-4 text-pure-white" />
             </div>
-            <div className="bg-white/10 text-white p-3 rounded-lg rounded-bl-sm">
+            <div className="bg-soft-ivory text-deep-charcoal p-3 rounded-lg rounded-bl-sm">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-white/50 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-satin-silver rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-satin-silver rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-satin-silver rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           </div>
@@ -177,17 +177,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onNewMessage }) => {
       </div>
 
       {/* Input Form */}
-      <form onSubmit={handleSendMessage} className="p-4 border-t border-white/20 flex gap-2">
+      <form onSubmit={handleSendMessage} className="p-4 border-t border-satin-silver flex gap-2">
         <Input
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           placeholder="Ask about properties, schedule viewings, get pricing info..."
-          className="flex-grow bg-white/20 border-white/20 text-white placeholder:text-white/50"
+          className="flex-grow bg-soft-ivory border-satin-silver text-deep-charcoal placeholder:text-deep-charcoal/50"
           disabled={isLoading}
         />
         <Button 
           type="submit" 
-          className="bg-gold text-gray-900 hover:bg-gold/90"
+          className="luxury-button-primary"
           disabled={isLoading || !inputMessage.trim()}
         >
           <Send className="h-4 w-4" />
