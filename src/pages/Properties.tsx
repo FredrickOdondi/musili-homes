@@ -48,12 +48,12 @@ const Properties: React.FC = () => {
   }, [searchParams]);
   
   return (
-    <div className="min-h-screen bg-offWhite">
-      <div className="bg-navy py-20">
+    <div className="min-h-screen bg-pure-white">
+      <div className="bg-deep-charcoal py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">Luxury Properties</h1>
-            <p className="text-xl text-white/80">Discover Kenya's finest real estate offerings</p>
+            <h1 className="text-4xl font-thin text-pure-white mb-2 luxury-heading">Luxury Properties</h1>
+            <p className="text-xl text-pure-white/80 font-light">Discover Kenya's finest real estate offerings</p>
           </div>
           <PropertySearch onSearch={handleSearch} />
         </div>
@@ -61,7 +61,7 @@ const Properties: React.FC = () => {
       
       <div className="container mx-auto px-4 py-12">
         <div className="mb-6 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-navy">
+          <h2 className="text-2xl font-thin text-deep-charcoal luxury-heading">
             {filteredProperties.length} {filteredProperties.length === 1 ? 'Property' : 'Properties'} Found
           </h2>
         </div>
@@ -70,8 +70,8 @@ const Properties: React.FC = () => {
           <PropertyGrid properties={filteredProperties} />
         ) : (
           <div className="text-center py-12">
-            <h3 className="text-xl font-medium text-gray-600">No properties match your search criteria.</h3>
-            <p className="mt-2 text-gray-500">Try adjusting your filters for more results.</p>
+            <h3 className="text-xl font-light text-deep-charcoal">No properties match your search criteria.</h3>
+            <p className="mt-2 text-deep-charcoal/70">Try adjusting your filters for more results.</p>
           </div>
         )}
       </div>

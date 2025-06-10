@@ -65,12 +65,26 @@
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'San Francisco', system-ui, sans-serif;
   }
 
-  /* Force text visibility */
-  h1, h2, h3, h4, h5, h6, p, span, div, td, th, label, button, input, textarea {
+  /* FORCE ALL TEXT TO BE VISIBLE WITH PROPER CONTRAST */
+  h1, h2, h3, h4, h5, h6 {
+    color: hsl(var(--deep-charcoal)) !important;
+    font-weight: 300 !important;
+  }
+
+  p, span, div, td, th, label, li, a {
     color: hsl(var(--deep-charcoal)) !important;
   }
 
-  /* Button text overrides */
+  /* Button text visibility - CRITICAL FIX */
+  button, .btn, [role="button"] {
+    color: hsl(var(--deep-charcoal)) !important;
+  }
+
+  button *, .btn *, [role="button"] * {
+    color: inherit !important;
+  }
+
+  /* Specific button variant overrides */
   .bg-gold-whisper, .bg-gold-whisper *, [class*="bg-gold-whisper"] * {
     color: hsl(var(--pure-white)) !important;
   }
@@ -81,6 +95,31 @@
 
   .bg-deep-charcoal, .bg-deep-charcoal *, [class*="bg-deep-charcoal"] * {
     color: hsl(var(--pure-white)) !important;
+  }
+
+  /* Input and form elements */
+  input, textarea, select {
+    color: hsl(var(--deep-charcoal)) !important;
+    background-color: hsl(var(--pure-white)) !important;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: hsl(var(--deep-charcoal) / 0.5) !important;
+  }
+
+  /* Table text visibility */
+  table, tbody, thead, tr, td, th {
+    color: hsl(var(--deep-charcoal)) !important;
+  }
+
+  /* Navigation text */
+  nav, nav * {
+    color: hsl(var(--deep-charcoal)) !important;
+  }
+
+  /* Card content */
+  .card, .card * {
+    color: hsl(var(--deep-charcoal)) !important;
   }
 
   /* Ensure contrast for specific elements */
@@ -110,23 +149,23 @@
   }
   
   .text-pure-white {
-    color: hsl(var(--pure-white));
+    color: hsl(var(--pure-white)) !important;
   }
   
   .text-soft-ivory {
-    color: hsl(var(--soft-ivory));
+    color: hsl(var(--soft-ivory)) !important;
   }
   
   .text-satin-silver {
-    color: hsl(var(--satin-silver));
+    color: hsl(var(--satin-silver)) !important;
   }
   
   .text-deep-charcoal {
-    color: hsl(var(--deep-charcoal));
+    color: hsl(var(--deep-charcoal)) !important;
   }
   
   .text-gold-whisper {
-    color: hsl(var(--gold-whisper));
+    color: hsl(var(--gold-whisper)) !important;
   }
   
   .border-satin-silver {
@@ -139,27 +178,59 @@
 
   /* Enhanced luxury styling */
   .luxury-card {
-    @apply bg-pure-white border border-satin-silver text-deep-charcoal shadow-sm;
+    @apply bg-pure-white border border-satin-silver shadow-sm;
+    color: hsl(var(--deep-charcoal)) !important;
+  }
+
+  .luxury-card * {
+    color: hsl(var(--deep-charcoal)) !important;
   }
 
   .luxury-button-primary {
-    @apply bg-gold-whisper text-pure-white hover:opacity-90 transition-all duration-300;
+    @apply bg-gold-whisper hover:opacity-90 transition-all duration-300;
+    color: hsl(var(--pure-white)) !important;
+  }
+
+  .luxury-button-primary * {
+    color: hsl(var(--pure-white)) !important;
   }
 
   .luxury-button-secondary {
-    @apply border border-satin-silver text-deep-charcoal hover:bg-soft-ivory transition-all duration-300;
+    @apply border border-satin-silver hover:bg-soft-ivory transition-all duration-300;
+    color: hsl(var(--deep-charcoal)) !important;
+    background-color: hsl(var(--pure-white)) !important;
+  }
+
+  .luxury-button-secondary * {
+    color: hsl(var(--deep-charcoal)) !important;
   }
 
   /* Typography enhancements */
   .luxury-heading {
-    @apply text-deep-charcoal font-thin tracking-wide;
+    color: hsl(var(--deep-charcoal)) !important;
+    font-weight: 300 !important;
+    letter-spacing: 0.025em;
   }
 
   .luxury-text {
-    @apply text-deep-charcoal/80 font-light;
+    color: hsl(var(--deep-charcoal) / 0.8) !important;
+    font-weight: 300;
   }
 
   .luxury-accent {
-    @apply text-gold-whisper;
+    color: hsl(var(--gold-whisper)) !important;
+  }
+
+  /* Footer specific styles */
+  footer {
+    background-color: hsl(var(--deep-charcoal)) !important;
+  }
+
+  footer, footer * {
+    color: hsl(var(--pure-white)) !important;
+  }
+
+  footer a:hover {
+    color: hsl(var(--gold-whisper)) !important;
   }
 }
