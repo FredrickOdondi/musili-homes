@@ -1,7 +1,8 @@
+
 import { properties } from '@/data/properties';
 import { Property } from '@/types';
-import { detectIntent, extractEntities } from './nlpService';
-import { generateResponse } from './responseGenerator';
+import { nlpService } from './nlpService';
+import { responseGenerator } from './responseGenerator';
 
 // Define types for entities and conversation state
 interface Entities {
@@ -55,12 +56,16 @@ let conversationState: ConversationState = {
 
 export const processUserMessage = async (message: string): Promise<AIResponse> => {
   try {
-    const intent = detectIntent(message);
-    const entities = extractEntities(message);
+    const intent = nlpService.analyzeIntent(message);
+    const entities = intent.entities;
     
     // Handle greeting
-    if (intent === 'greeting' || conversationState.currentStep === 'greeting') {
-      const response = generateResponse('greeting', {}, conversationState);
+    if (intent.type === 'greeting' || conversationState.currentStep === 'greeting') {
+      const response = responseGenerator.generateDynamicResponse({
+        intent,
+        userMessage: message,
+        conversationHistory: []
+      });
       return {
         message: response,
         newState: { ...conversationState, currentStep: 'general_chat' }
@@ -68,11 +73,15 @@ export const processUserMessage = async (message: string): Promise<AIResponse> =
     }
 
     // Handle property inquiries
-    if (intent === 'property_inquiry') {
+    if (intent.type === 'property_search' || intent.type === 'property_info') {
       const matchedProperties = findMatchingProperties(entities);
       
       if (matchedProperties.length > 0) {
-        const response = generateResponse('property_info', { properties: matchedProperties }, conversationState);
+        const response = responseGenerator.generateDynamicResponse({
+          intent: { ...intent, entities: { ...entities, properties: matchedProperties } },
+          userMessage: message,
+          conversationHistory: []
+        });
         return {
           message: response,
           newState: { 
@@ -82,7 +91,11 @@ export const processUserMessage = async (message: string): Promise<AIResponse> =
           }
         };
       } else {
-        const response = generateResponse('no_properties_found', { entities }, conversationState);
+        const response = responseGenerator.generateDynamicResponse({
+          intent: { ...intent, type: 'general_inquiry' },
+          userMessage: message,
+          conversationHistory: []
+        });
         return {
           message: response,
           newState: { ...conversationState, currentStep: 'general_chat' }
@@ -91,12 +104,16 @@ export const processUserMessage = async (message: string): Promise<AIResponse> =
     }
 
     // Handle viewing requests
-    if (intent === 'viewing_request' || conversationState.currentStep === 'collecting_details') {
+    if (intent.type === 'viewing_request' || conversationState.currentStep === 'collecting_details') {
       return handleViewingRequest(message, entities);
     }
 
     // Handle general inquiries
-    const response = generateResponse('general_inquiry', { message, entities }, conversationState);
+    const response = responseGenerator.generateDynamicResponse({
+      intent,
+      userMessage: message,
+      conversationHistory: []
+    });
     return {
       message: response,
       newState: conversationState
@@ -111,12 +128,6 @@ export const processUserMessage = async (message: string): Promise<AIResponse> =
   }
 };
 
-// Helper function to extract price range from entities
-const extractPriceRange = (priceRange: string) => {
-  const [min, max] = priceRange.split('-').map(Number);
-  return { min, max };
-};
-
 const findMatchingProperties = (entities: any): Property[] => {
   return properties.filter(property => {
     if (entities.location && !property.location.toLowerCase().includes(entities.location.toLowerCase())) {
@@ -125,9 +136,9 @@ const findMatchingProperties = (entities: any): Property[] => {
     if (entities.bedrooms && property.bedrooms !== entities.bedrooms) {
       return false;
     }
-    if (entities.priceRange) {
-      const { min, max } = entities.priceRange;
-      if ((min && property.price < min) || (max && property.price > max)) {
+    if (entities.price_range) {
+      const priceRange = entities.price_range;
+      if (property.price > priceRange * 1.2 || property.price < priceRange * 0.8) {
         return false;
       }
     }
@@ -142,8 +153,8 @@ const handleViewingRequest = (message: string, entities: any): AIResponse => {
   if (!currentDetails.name && entities.name) {
     currentDetails.name = entities.name;
   }
-  if (!currentDetails.contact && entities.contact) {
-    currentDetails.contact = entities.contact;
+  if (!currentDetails.contact && (entities.phone || entities.email)) {
+    currentDetails.contact = entities.phone || entities.email;
   }
   if (!currentDetails.date && entities.date) {
     currentDetails.date = entities.date;
@@ -161,10 +172,7 @@ const handleViewingRequest = (message: string, entities: any): AIResponse => {
   // Check if we have all required details
   if (currentDetails.name && currentDetails.contact && currentDetails.date && currentDetails.time) {
     // All details collected, ask for confirmation
-    const response = generateResponse('confirm_viewing', { 
-      details: currentDetails, 
-      property: conversationState.propertyContext 
-    }, newState);
+    const response = `Perfect! I have all the details for your viewing:\n\n**Viewing Summary:**\n• **Property:** ${conversationState.propertyContext?.title}\n• **Name:** ${currentDetails.name}\n• **Contact:** ${currentDetails.contact}\n• **Date:** ${currentDetails.date}\n• **Time:** ${currentDetails.time}\n\nWould you like me to confirm this booking? Please reply with "Yes" to confirm or "No" to cancel.`;
     
     return {
       message: response,
@@ -172,10 +180,13 @@ const handleViewingRequest = (message: string, entities: any): AIResponse => {
     };
   } else {
     // Still need more details
-    const response = generateResponse('collect_viewing_details', { 
-      currentDetails, 
-      property: conversationState.propertyContext 
-    }, newState);
+    const missingDetails = [];
+    if (!currentDetails.name) missingDetails.push("your name");
+    if (!currentDetails.contact) missingDetails.push("your contact information");
+    if (!currentDetails.date) missingDetails.push("your preferred date");
+    if (!currentDetails.time) missingDetails.push("your preferred time");
+    
+    const response = `To schedule your viewing for **${conversationState.propertyContext?.title || 'this property'}**, I still need ${missingDetails.join(', ')}.\n\nPlease provide the missing information so I can arrange everything for you.`;
     
     return {
       message: response,
@@ -196,7 +207,7 @@ export const confirmViewingBooking = (): AIResponse => {
   }
 
   const viewingRequest: ViewingRequest = {
-    propertyId: property.id,
+    propertyId: property.id.toString(),
     clientName: details.name,
     clientContact: details.contact,
     preferredDate: details.date,
@@ -204,10 +215,7 @@ export const confirmViewingBooking = (): AIResponse => {
     message: `Viewing request for ${property.title} in ${property.location}`
   };
 
-  const response = generateResponse('booking_confirmed', { 
-    details, 
-    property 
-  }, conversationState);
+  const response = `Excellent! Your viewing has been confirmed.\n\n**Booking Confirmed:**\n• **Property:** ${property.title}\n• **Date & Time:** ${details.date} at ${details.time}\n• **Contact:** ${details.contact}\n\nOur property specialist will contact you shortly to finalize the arrangements. Thank you for choosing our services!`;
 
   return {
     message: response,
@@ -218,7 +226,7 @@ export const confirmViewingBooking = (): AIResponse => {
 };
 
 export const cancelViewingBooking = (): AIResponse => {
-  const response = generateResponse('booking_cancelled', {}, conversationState);
+  const response = "No problem! Your viewing request has been cancelled. Feel free to ask me about other properties or schedule a different viewing whenever you're ready.";
   
   return {
     message: response,
@@ -228,4 +236,13 @@ export const cancelViewingBooking = (): AIResponse => {
 
 export const updateConversationState = (newState: ConversationState) => {
   conversationState = newState;
+};
+
+// Create a propertyAI object to maintain compatibility with ChatInterface
+export const propertyAI = {
+  generateResponse: async (message: string, conversationHistory: any[] = []): Promise<string> => {
+    const response = await processUserMessage(message);
+    updateConversationState(response.newState);
+    return response.message;
+  }
 };

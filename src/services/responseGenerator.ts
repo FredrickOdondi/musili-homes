@@ -1,4 +1,3 @@
-
 import { properties } from '@/data/properties';
 import { agents } from '@/data/agents';
 
@@ -242,3 +241,11 @@ export class ResponseGenerator {
 }
 
 export const responseGenerator = new ResponseGenerator();
+
+export const generateResponse = (type: string, context: any, state: any) => {
+  return responseGenerator.generateDynamicResponse({
+    intent: { type, entities: context },
+    userMessage: '',
+    conversationHistory: []
+  });
+};

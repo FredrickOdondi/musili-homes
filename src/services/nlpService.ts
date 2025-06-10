@@ -177,3 +177,13 @@ export class NLPService {
 }
 
 export const nlpService = new NLPService();
+
+// Export individual functions for compatibility
+export const detectIntent = (message: string) => {
+  return nlpService.analyzeIntent(message);
+};
+
+export const extractEntities = (message: string) => {
+  const intent = nlpService.analyzeIntent(message);
+  return intent.entities;
+};
