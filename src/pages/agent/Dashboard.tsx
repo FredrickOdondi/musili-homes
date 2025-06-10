@@ -13,7 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from '@/hooks/use-toast';
 import MessagePanel from '@/components/messaging/MessagePanel';
 import ClientList from '@/components/messaging/ClientList';
-import ThemeToggle from '@/components/ThemeToggle';
 
 const AgentDashboard: React.FC = () => {
   const { isAgent, user, logout } = useAuth();
@@ -94,7 +93,7 @@ const AgentDashboard: React.FC = () => {
           <div className="flex items-center gap-3">
             <Button 
               variant="outline" 
-              className="border-pure-white text-pure-white hover:bg-pure-white/10"
+              className="border-pure-white text-pure-white hover:bg-pure-white hover:text-deep-charcoal transition-colors"
               onClick={handleLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
@@ -164,10 +163,10 @@ const AgentDashboard: React.FC = () => {
         </div>
         
         <Tabs defaultValue="properties" className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="properties">Properties</TabsTrigger>
-            <TabsTrigger value="tasks">My Tasks</TabsTrigger>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
+          <TabsList className="mb-4 bg-pure-white border border-satin-silver">
+            <TabsTrigger value="properties" className="text-deep-charcoal data-[state=active]:bg-gold-whisper data-[state=active]:text-pure-white">Properties</TabsTrigger>
+            <TabsTrigger value="tasks" className="text-deep-charcoal data-[state=active]:bg-gold-whisper data-[state=active]:text-pure-white">My Tasks</TabsTrigger>
+            <TabsTrigger value="messages" className="text-deep-charcoal data-[state=active]:bg-gold-whisper data-[state=active]:text-pure-white">Messages</TabsTrigger>
           </TabsList>
           
           <TabsContent value="properties" className="luxury-card rounded-lg shadow-md p-6">
@@ -178,11 +177,11 @@ const AgentDashboard: React.FC = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="bg-soft-ivory">
-                      <th className="py-3 px-4 text-left text-deep-charcoal">Title</th>
-                      <th className="py-3 px-4 text-left text-deep-charcoal">Location</th>
-                      <th className="py-3 px-4 text-left text-deep-charcoal">Price (KES)</th>
-                      <th className="py-3 px-4 text-left text-deep-charcoal">Status</th>
-                      <th className="py-3 px-4 text-left text-deep-charcoal">Date Added</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Title</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Location</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Price (KES)</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Status</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Date Added</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -190,9 +189,9 @@ const AgentDashboard: React.FC = () => {
                       <tr key={property.id} className="border-b border-satin-silver">
                         <td className="py-3 px-4 text-deep-charcoal">{property.title}</td>
                         <td className="py-3 px-4 text-deep-charcoal">{property.location}</td>
-                        <td className="py-3 px-4 text-deep-charcoal">{formatCurrency(property.price)}</td>
+                        <td className="py-3 px-4 text-deep-charcoal font-medium">{formatCurrency(property.price)}</td>
                         <td className="py-3 px-4">
-                          <span className={`inline-block px-2 py-1 rounded text-xs ${
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                             property.status === 'For Sale' ? 'bg-green-100 text-green-800' : 
                             property.status === 'For Rent' ? 'bg-blue-100 text-blue-800' :
                             'bg-gray-100 text-gray-800'
@@ -214,57 +213,57 @@ const AgentDashboard: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="tasks" className="luxury-card rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-bold text-navy dark:text-white mb-4">My Tasks</h3>
+            <h3 className="text-xl font-bold text-deep-charcoal mb-4">My Tasks</h3>
             
             {agentTasks.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-gray-100 dark:bg-gray-700">
-                      <th className="py-3 px-4 text-left dark:text-white">Title</th>
-                      <th className="py-3 px-4 text-left dark:text-white">Description</th>
-                      <th className="py-3 px-4 text-left dark:text-white">Priority</th>
-                      <th className="py-3 px-4 text-left dark:text-white">Status</th>
-                      <th className="py-3 px-4 text-left dark:text-white">Due Date</th>
-                      <th className="py-3 px-4 text-left dark:text-white">Actions</th>
+                    <tr className="bg-soft-ivory">
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Title</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Description</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Priority</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Status</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Due Date</th>
+                      <th className="py-3 px-4 text-left text-deep-charcoal font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {agentTasks.map((task) => (
-                      <tr key={task.id} className="border-b dark:border-gray-700">
-                        <td className="py-3 px-4 dark:text-white">{task.title}</td>
-                        <td className="py-3 px-4 dark:text-white">{task.description}</td>
+                      <tr key={task.id} className="border-b border-satin-silver">
+                        <td className="py-3 px-4 text-deep-charcoal font-medium">{task.title}</td>
+                        <td className="py-3 px-4 text-deep-charcoal">{task.description}</td>
                         <td className="py-3 px-4">
-                          <span className={`inline-block px-2 py-1 rounded text-xs ${
-                            task.priority === 'High' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 
-                            task.priority === 'Medium' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300' :
-                            'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                            task.priority === 'High' ? 'bg-red-100 text-red-800' : 
+                            task.priority === 'Medium' ? 'bg-amber-100 text-amber-800' :
+                            'bg-green-100 text-green-800'
                           }`}>
                             {task.priority}
                           </span>
                         </td>
                         <td className="py-3 px-4">
-                          <span className={`inline-block px-2 py-1 rounded text-xs ${
-                            task.status === 'Completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 
-                            task.status === 'In Progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' :
-                            'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                            task.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+                            task.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
                           }`}>
                             {task.status}
                           </span>
                         </td>
-                        <td className="py-3 px-4 dark:text-white">{task.dueDate}</td>
+                        <td className="py-3 px-4 text-deep-charcoal">{task.dueDate}</td>
                         <td className="py-3 px-4">
                           {task.status !== 'Completed' ? (
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="text-green-600 border-green-600 hover:bg-green-50 dark:text-green-400 dark:border-green-400 dark:hover:bg-green-900/30"
+                              className="text-green-600 border-green-600 hover:bg-green-50 hover:text-green-700 font-medium"
                               onClick={() => handleCompleteTask(task.id)}
                             >
                               Mark Complete
                             </Button>
                           ) : (
-                            <span className="text-green-600 dark:text-green-400 font-medium">✓ Completed</span>
+                            <span className="text-green-600 font-medium">✓ Completed</span>
                           )}
                         </td>
                       </tr>
@@ -274,13 +273,13 @@ const AgentDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-500 dark:text-gray-400">No tasks assigned to you yet.</p>
+                <p className="text-deep-charcoal/70">No tasks assigned to you yet.</p>
               </div>
             )}
           </TabsContent>
           
           <TabsContent value="messages" className="luxury-card rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-bold text-navy dark:text-white mb-4">Messages</h3>
+            <h3 className="text-xl font-bold text-deep-charcoal mb-4">Messages</h3>
             
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               <div className="lg:col-span-1 space-y-4">
@@ -288,17 +287,17 @@ const AgentDashboard: React.FC = () => {
                 <div 
                   className={`flex items-center gap-3 p-2 ${
                     activeContact.role === 'admin' 
-                    ? 'bg-blue-100 dark:bg-blue-900' 
-                    : 'bg-gray-100 dark:bg-gray-600'
-                  } rounded-lg cursor-pointer`}
+                    ? 'bg-blue-100' 
+                    : 'bg-soft-ivory'
+                  } rounded-lg cursor-pointer transition-colors`}
                   onClick={handleSelectAdmin}
                 >
-                  <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                    <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <div className="bg-blue-100 p-2 rounded-full">
+                    <MessageSquare className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-medium dark:text-white">Admin</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">John Musili</p>
+                    <p className="font-medium text-deep-charcoal">Admin</p>
+                    <p className="text-xs text-deep-charcoal/70">John Musili</p>
                   </div>
                 </div>
                 
@@ -315,7 +314,7 @@ const AgentDashboard: React.FC = () => {
                   recipient={
                     activeContact.role === 'admin'
                       ? { id: activeContact.id, name: activeContact.name, role: 'admin' }
-                      : { id: activeContact.id, name: activeContact.name, role: 'agent' } // Using 'agent' role as a placeholder
+                      : { id: activeContact.id, name: activeContact.name, role: 'agent' }
                   }
                 />
               </div>

@@ -53,8 +53,8 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-pure-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-deep-charcoal mb-6 text-center">Login to Your Account</h2>
+    <div className="w-full max-w-md mx-auto p-6 bg-pure-white rounded-lg shadow-md border border-satin-silver">
+      <h2 className="text-2xl font-bold text-deep-charcoal mb-6 text-center luxury-heading">Login to Your Account</h2>
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -63,11 +63,15 @@ const LoginForm: React.FC = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-deep-charcoal">Email</FormLabel>
+                <FormLabel className="text-deep-charcoal font-medium">Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
+                  <Input 
+                    placeholder="Enter your email" 
+                    className="bg-pure-white border-satin-silver text-deep-charcoal placeholder:text-deep-charcoal/50"
+                    {...field} 
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-soft-crimson" />
               </FormItem>
             )}
           />
@@ -77,11 +81,16 @@ const LoginForm: React.FC = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-deep-charcoal">Password</FormLabel>
+                <FormLabel className="text-deep-charcoal font-medium">Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Enter your password" {...field} />
+                  <Input 
+                    type="password" 
+                    placeholder="Enter your password" 
+                    className="bg-pure-white border-satin-silver text-deep-charcoal placeholder:text-deep-charcoal/50"
+                    {...field} 
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-soft-crimson" />
               </FormItem>
             )}
           />
@@ -96,9 +105,10 @@ const LoginForm: React.FC = () => {
         </form>
       </Form>
       
-      <div className="mt-4 text-sm text-center text-deep-charcoal/70">
-        <p>Admin Login: admin@musili.co.ke / admin123</p>
-        <p>Agent Login: sarah@musili.co.ke / agent123</p>
+      <div className="mt-4 text-sm text-center text-deep-charcoal/70 bg-soft-ivory p-3 rounded">
+        <p className="font-medium text-deep-charcoal mb-1">Test Credentials:</p>
+        <p><strong>Admin:</strong> admin@musili.co.ke / admin123</p>
+        <p><strong>Agent:</strong> sarah@musili.co.ke / agent123</p>
       </div>
     </div>
   );

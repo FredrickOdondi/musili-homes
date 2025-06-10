@@ -25,7 +25,7 @@
     --secondary-foreground: 0 0% 17%; /* #2B2B2B */
 
     --muted: 0 0% 88%; /* #E0E0E0 */
-    --muted-foreground: 0 0% 45%; /* #737373 */
+    --muted-foreground: 0 0% 17%; /* #2B2B2B */
 
     --accent: 34 28% 96%; /* #F8F1E9 */
     --accent-foreground: 0 0% 17%; /* #2B2B2B */
@@ -63,6 +63,29 @@
   body {
     @apply bg-background text-foreground;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'San Francisco', system-ui, sans-serif;
+  }
+
+  /* Force text visibility */
+  h1, h2, h3, h4, h5, h6, p, span, div, td, th, label, button, input, textarea {
+    color: hsl(var(--deep-charcoal)) !important;
+  }
+
+  /* Button text overrides */
+  .bg-gold-whisper, .bg-gold-whisper *, [class*="bg-gold-whisper"] * {
+    color: hsl(var(--pure-white)) !important;
+  }
+
+  .bg-soft-crimson, .bg-soft-crimson *, [class*="bg-soft-crimson"] * {
+    color: hsl(var(--pure-white)) !important;
+  }
+
+  .bg-deep-charcoal, .bg-deep-charcoal *, [class*="bg-deep-charcoal"] * {
+    color: hsl(var(--pure-white)) !important;
+  }
+
+  /* Ensure contrast for specific elements */
+  .text-pure-white, .text-pure-white * {
+    color: hsl(var(--pure-white)) !important;
   }
 
   /* Luxury color utility classes */
