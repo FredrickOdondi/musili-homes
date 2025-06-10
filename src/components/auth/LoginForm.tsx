@@ -27,7 +27,7 @@ const loginSchema = z.object({
 });
 
 const LoginForm: React.FC = () => {
-  const { login, isAdmin, isAgent } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -47,17 +47,14 @@ const LoginForm: React.FC = () => {
     const success = await login(credentials.email, credentials.password);
     
     if (success) {
-      if (isAdmin) {
-        navigate('/admin/dashboard');
-      } else if (isAgent) {
-        navigate('/agent/dashboard');
-      }
+      // Navigation is handled in the AuthContext after successful login
+      console.log('Login successful');
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-navy mb-6 text-center">Login to Your Account</h2>
+    <div className="w-full max-w-md mx-auto p-6 bg-pure-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-deep-charcoal mb-6 text-center">Login to Your Account</h2>
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -66,7 +63,7 @@ const LoginForm: React.FC = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-deep-charcoal">Email</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter your email" {...field} />
                 </FormControl>
@@ -80,7 +77,7 @@ const LoginForm: React.FC = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-deep-charcoal">Password</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="Enter your password" {...field} />
                 </FormControl>
@@ -91,7 +88,7 @@ const LoginForm: React.FC = () => {
           
           <Button 
             type="submit" 
-            className="w-full bg-gold text-navy hover:bg-gold/90"
+            className="w-full luxury-button-primary"
             disabled={form.formState.isSubmitting}
           >
             {form.formState.isSubmitting ? "Logging in..." : "Login"}
@@ -99,7 +96,7 @@ const LoginForm: React.FC = () => {
         </form>
       </Form>
       
-      <div className="mt-4 text-sm text-center text-gray-600">
+      <div className="mt-4 text-sm text-center text-deep-charcoal/70">
         <p>Admin Login: admin@musili.co.ke / admin123</p>
         <p>Agent Login: sarah@musili.co.ke / agent123</p>
       </div>

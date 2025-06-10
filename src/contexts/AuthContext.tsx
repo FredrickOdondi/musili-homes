@@ -32,7 +32,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedUser = localStorage.getItem('musiliUser');
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
       } catch (e) {
         console.error('Error parsing stored user data');
         localStorage.removeItem('musiliUser');
@@ -44,17 +45,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
+      console.log('Attempting login with:', email, password);
+      
       // Simple mock authentication
       const authenticatedUser = authenticate(email, password);
+      console.log('Authentication result:', authenticatedUser);
       
       if (authenticatedUser) {
         const { password: _, ...userWithoutPassword } = authenticatedUser;
         setUser(userWithoutPassword);
         localStorage.setItem('musiliUser', JSON.stringify(userWithoutPassword));
+        
         toast({
           title: "Login Successful",
           description: `Welcome back, ${authenticatedUser.name}!`,
         });
+        
+        // Navigate based on role
+        setTimeout(() => {
+          if (authenticatedUser.role === 'admin') {
+            window.location.href = '/admin/dashboard';
+          } else if (authenticatedUser.role === 'agent') {
+            window.location.href = '/agent/dashboard';
+          }
+        }, 1000);
+        
         return true;
       } else {
         toast({

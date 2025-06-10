@@ -48,37 +48,6 @@
     --gold-whisper: 45 85% 46%; /* #D4A017 */
     --soft-crimson: 354 70% 54%; /* #E63946 */
   }
-
-  .dark {
-    /* Dark theme adjustments */
-    --background: 0 0% 17%; /* #2B2B2B */
-    --foreground: 0 0% 100%; /* #FFFFFF */
-
-    --card: 0 0% 20%; /* Slightly lighter than background */
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 17%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 45 85% 46%; /* Keep gold accent */
-    --primary-foreground: 0 0% 17%;
-
-    --secondary: 0 0% 25%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 25%;
-    --muted-foreground: 0 0% 65%;
-
-    --accent: 0 0% 25%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 354 70% 54%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 25%;
-    --input: 0 0% 25%;
-    --ring: 45 85% 46%;
-  }
 }
 
 @layer base {
@@ -150,10 +119,6 @@
     @apply bg-pure-white border border-satin-silver text-deep-charcoal shadow-sm;
   }
 
-  .dark .luxury-card {
-    @apply bg-card border-border text-card-foreground;
-  }
-
   .luxury-button-primary {
     @apply bg-gold-whisper text-pure-white hover:opacity-90 transition-all duration-300;
   }
@@ -162,30 +127,16 @@
     @apply border border-satin-silver text-deep-charcoal hover:bg-soft-ivory transition-all duration-300;
   }
 
-  .dark .luxury-button-secondary {
-    @apply border-border text-foreground hover:bg-accent;
-  }
-
   /* Typography enhancements */
   .luxury-heading {
     @apply text-deep-charcoal font-thin tracking-wide;
-  }
-
-  .dark .luxury-heading {
-    @apply text-foreground;
   }
 
   .luxury-text {
     @apply text-deep-charcoal/80 font-light;
   }
 
-  .dark .luxury-text {
-    @apply text-foreground/80;
-  }
-
   .luxury-accent {
     @apply text-gold-whisper;
   }
 }
-
-/* Remove the old color classes and theme overrides */

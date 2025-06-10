@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, LogIn } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,8 +23,6 @@ const Navbar: React.FC = () => {
           <Link to="/contact" className="luxury-heading hover:text-gold-whisper transition-colors font-light tracking-wide">Contact</Link>
           
           <div className="flex items-center space-x-6">
-            <ThemeToggle />
-            
             <Link to="/login">
               <Button variant="outline" className="luxury-button-secondary font-light tracking-wide transition-all duration-300">
                 <LogIn className="mr-2 h-4 w-4" />
@@ -36,9 +33,7 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Mobile menu button */}
-        <div className="md:hidden flex items-center space-x-4">
-          <ThemeToggle />
-          
+        <div className="md:hidden">
           <Button 
             variant="ghost" 
             size="icon"
