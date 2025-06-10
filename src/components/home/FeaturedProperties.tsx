@@ -8,26 +8,26 @@ const FeaturedProperties: React.FC = () => {
   const featuredProperties = getFeaturedProperties();
 
   return (
-    <section className="py-20 bg-offWhite">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-navy mb-2">Featured Properties</h2>
-          <div className="w-24 h-1 bg-gold mx-auto mb-4"></div>
-          <p className="text-lg text-charcoal/70 max-w-2xl mx-auto">
-            Discover our handpicked selection of Kenya's most exceptional properties.
+    <section className="py-32 bg-white">
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-20">
+          <h2 className="text-5xl font-thin text-black mb-6 tracking-wide">Featured Collection</h2>
+          <div className="w-24 h-px bg-gold mx-auto mb-8"></div>
+          <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
+            Handpicked selections from Kenya's most exceptional properties
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {featuredProperties.map((property) => (
             <PropertyCard key={property.id} property={property} />
           ))}
         </div>
         
-        <div className="text-center mt-12">
+        <div className="text-center mt-20">
           <Link 
             to="/properties"
-            className="inline-block border-2 border-gold text-navy hover:bg-gold hover:text-white transition-colors px-8 py-3 font-medium"
+            className="inline-block border border-black text-black hover:bg-black hover:text-white transition-all duration-300 px-12 py-4 font-light tracking-wide"
           >
             View All Properties
           </Link>

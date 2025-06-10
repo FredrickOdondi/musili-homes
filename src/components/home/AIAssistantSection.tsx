@@ -6,29 +6,29 @@ import ChatInterface from './ChatInterface';
 
 const AIAssistantSection: React.FC = () => {
   return (
-    <div id="ai-assistant" className="py-20 bg-navy text-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-2 text-white">AI Property Assistant</h2>
-          <div className="w-24 h-1 bg-gold mx-auto mb-4"></div>
-          <p className="text-lg text-white max-w-2xl mx-auto">
-            Get intelligent, personalized answers about our properties, locations, pricing, and services.
+    <div id="ai-assistant" className="py-32 bg-gray-50">
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-20">
+          <h2 className="text-5xl font-thin text-black mb-6 tracking-wide">Personal Assistant</h2>
+          <div className="w-24 h-px bg-gold mx-auto mb-8"></div>
+          <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
+            Intelligent guidance for your property journey
           </p>
         </div>
         
-        <div className="max-w-4xl mx-auto">
-          <Card className="bg-white/5 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden">
-            <div className="flex items-center gap-4 p-6 border-b border-white/20">
-              <div className="bg-gold p-3 rounded-full">
-                <Bot className="h-6 w-6 text-gray-900" />
+        <div className="max-w-5xl mx-auto">
+          <Card className="bg-white shadow-2xl rounded-none border-0 overflow-hidden">
+            <div className="flex items-center gap-6 p-8 border-b border-gray-100">
+              <div className="bg-gold p-4 rounded-full">
+                <Bot className="h-8 w-8 text-black" />
               </div>
               <div>
-                <h3 className="font-bold text-xl text-white">Smart Property Assistant</h3>
-                <p className="text-white/80">Ask me anything about our luxury properties</p>
+                <h3 className="font-light text-2xl text-black tracking-wide">Property Concierge</h3>
+                <p className="text-gray-600 font-light text-lg">Ask me anything about our luxury properties</p>
               </div>
             </div>
             
-            <div className="h-[500px]">
+            <div className="h-[600px]">
               <ChatInterface />
             </div>
           </Card>

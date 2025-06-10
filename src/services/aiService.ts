@@ -1,337 +1,231 @@
 import { properties } from '@/data/properties';
-import { agents } from '@/data/agents';
-import { globalMessages } from '@/components/properties/ContactAgentForm';
-import { nlpService } from './nlpService';
-import { responseGenerator } from './responseGenerator';
+import { Property } from '@/types';
+import { detectIntent, extractEntities } from './nlpService';
+import { generateResponse } from './responseGenerator';
 
-interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
-
-interface ViewingRequest {
-  propertyId: number;
-  propertyTitle: string;
-  clientName?: string;
-  clientPhone?: string;
-  clientEmail?: string;
-  preferredDate?: string;
-  preferredTime?: string;
-  agentId: number;
+// Define types for entities and conversation state
+interface Entities {
+  location?: string;
+  bedrooms?: number;
+  priceRange?: { min?: number; max?: number };
+  date?: string;
+  time?: string;
+  name?: string;
+  contact?: string;
+  propertyType?: string;
 }
 
 interface ConversationState {
-  currentProperty?: any;
-  viewingInterest?: boolean;
-  clientDetails?: {
+  currentStep: 'greeting' | 'property_inquiry' | 'collecting_details' | 'confirming_booking' | 'general_chat';
+  propertyContext?: Property;
+  viewingDetails?: {
     name?: string;
-    phone?: string;
-    email?: string;
-    preferredDate?: string;
-    preferredTime?: string;
+    contact?: string;
+    date?: string;
+    time?: string;
   };
-  awaitingConfirmation?: boolean;
-  userPreferences?: Record<string, any>;
-  conversationContext?: string;
+  userPreferences?: {
+    location?: string;
+    priceRange?: string;
+    bedrooms?: number;
+    propertyType?: string;
+  };
 }
 
-export class PropertyAIService {
-  private propertyData: string;
-  private agentData: string;
-  private conversationStates: Map<string, ConversationState> = new Map();
+interface ViewingRequest {
+  propertyId: string;
+  clientName: string;
+  clientContact: string;
+  preferredDate: string;
+  preferredTime: string;
+  message: string;
+}
 
-  constructor() {
-    // Prepare property data for AI context
-    this.propertyData = properties.map(property => `
-      Property ID: ${property.id}
-      Title: ${property.title}
-      Location: ${property.location}
-      Address: ${property.address}
-      Price: KES ${property.price.toLocaleString()}
-      Bedrooms: ${property.bedrooms}
-      Bathrooms: ${property.bathrooms}
-      Size: ${property.size} sq ft
-      Description: ${property.description}
-      Status: ${property.status}
-      Agent ID: ${property.agentId}
-    `).join('\n---\n');
+interface AIResponse {
+  message: string;
+  newState: ConversationState;
+  shouldNotifyAgent?: boolean;
+  viewingRequest?: ViewingRequest;
+}
 
-    this.agentData = agents.map(agent => `
-      Agent ID: ${agent.id}
-      Agent: ${agent.name}
-      Email: ${agent.email}
-      Phone: ${agent.phone}
-      Bio: ${agent.bio}
-      Properties: ${agent.properties.join(', ')}
-    `).join('\n---\n');
-  }
+// Initialize conversation state
+let conversationState: ConversationState = {
+  currentStep: 'greeting'
+};
 
-  async generateResponse(userMessage: string, conversationHistory: ChatMessage[]): Promise<string> {
-    const sessionKey = 'current_session'; // In a real app, this would be unique per user
-    const state = this.conversationStates.get(sessionKey) || {};
+export const processUserMessage = async (message: string): Promise<AIResponse> => {
+  try {
+    const intent = detectIntent(message);
+    const entities = extractEntities(message);
     
-    // Build conversation context
-    const context = conversationHistory.slice(-3).map(msg => 
-      `${msg.role}: ${msg.content}`
-    ).join('\n');
-
-    // Analyze user intent using NLP
-    const intent = nlpService.analyzeIntent(userMessage, context);
-    const sentiment = nlpService.generateSentiment(userMessage);
-    
-    console.log('AI Analysis:', { intent, sentiment, entities: intent.entities });
-
-    // Handle ongoing viewing process first
-    if (this.isInViewingProcess(state, userMessage)) {
-      return this.handleViewingProcess(userMessage, context, state, intent);
+    // Handle greeting
+    if (intent === 'greeting' || conversationState.currentStep === 'greeting') {
+      const response = generateResponse('greeting', {}, conversationState);
+      return {
+        message: response,
+        newState: { ...conversationState, currentStep: 'general_chat' }
+      };
     }
 
-    // Generate intelligent response based on intent
-    const response = this.generateIntelligentResponse(userMessage, intent, context, state);
-    
-    // Update conversation state with new information
-    this.updateConversationState(sessionKey, state, intent, response);
-    
-    return response.message;
-  }
-
-  private isInViewingProcess(state: ConversationState, message: string): boolean {
-    return !!(state.awaitingConfirmation || 
-             (state.viewingInterest && state.currentProperty) ||
-             (state.viewingInterest && !this.hasCompleteClientDetails(state)));
-  }
-
-  private generateIntelligentResponse(
-    userMessage: string, 
-    intent: any, 
-    context: string, 
-    state: ConversationState
-  ): { message: string; newState: ConversationState; shouldNotifyAgent?: boolean; viewingRequest?: ViewingRequest } {
-    
-    // Use the response generator for intelligent responses
-    const responseContext = {
-      intent,
-      userMessage,
-      conversationHistory: [],
-      userPreferences: state.userPreferences
-    };
-
-    let message = responseGenerator.generateDynamicResponse(responseContext);
-    let newState = { ...state };
-    
-    // Handle property-specific actions
-    if (intent.type === 'property_info' && intent.entities.property_name) {
-      const property = this.findPropertyByName(intent.entities.property_name);
-      if (property) {
-        newState.currentProperty = property;
-        // Update preferences based on viewed property
-        newState.userPreferences = {
-          ...newState.userPreferences,
-          lastViewedProperty: property.id,
-          preferredLocation: property.location,
-          priceRange: property.price
+    // Handle property inquiries
+    if (intent === 'property_inquiry') {
+      const matchedProperties = findMatchingProperties(entities);
+      
+      if (matchedProperties.length > 0) {
+        const response = generateResponse('property_info', { properties: matchedProperties }, conversationState);
+        return {
+          message: response,
+          newState: { 
+            ...conversationState, 
+            currentStep: 'property_inquiry',
+            propertyContext: matchedProperties[0]
+          }
+        };
+      } else {
+        const response = generateResponse('no_properties_found', { entities }, conversationState);
+        return {
+          message: response,
+          newState: { ...conversationState, currentStep: 'general_chat' }
         };
       }
     }
 
-    // Handle viewing interest
-    if (intent.type === 'viewing_request' && newState.currentProperty) {
-      message += `\n\nTo proceed with scheduling your viewing, I'll need:\n• Your full name\n• Contact phone number\n• Preferred date and time\n\nYou can provide all details at once, like: "My name is John Smith, phone 0712345678, I'd like to visit this Saturday at 2 PM"`;
-      newState.viewingInterest = true;
+    // Handle viewing requests
+    if (intent === 'viewing_request' || conversationState.currentStep === 'collecting_details') {
+      return handleViewingRequest(message, entities);
     }
 
-    // Extract and store client details from entities
-    if (intent.entities.name || intent.entities.phone || intent.entities.email) {
-      newState.clientDetails = {
-        ...newState.clientDetails,
-        ...intent.entities
-      };
-    }
-
-    return { message, newState };
-  }
-
-  private handleViewingProcess(
-    userMessage: string, 
-    context: string, 
-    state: ConversationState, 
-    intent: any
-  ): { message: string; newState: ConversationState; shouldNotifyAgent?: boolean; viewingRequest?: ViewingRequest } {
-    
-    // Handle confirmation
-    if (state.awaitingConfirmation && this.isConfirmation(userMessage)) {
-      return this.processViewingConfirmation(state, userMessage);
-    }
-
-    // Collect missing client details
-    const updatedDetails = {
-      ...state.clientDetails,
-      ...intent.entities
-    };
-
-    // Extract date/time if provided
-    if (intent.entities.date || intent.entities.time) {
-      updatedDetails.preferredDate = intent.entities.date || updatedDetails.preferredDate;
-      updatedDetails.preferredTime = intent.entities.time || updatedDetails.preferredTime;
-    }
-
-    const newState = { ...state, clientDetails: updatedDetails };
-
-    // Check if we have all required information
-    if (this.hasCompleteClientDetails(newState) && newState.currentProperty) {
-      return {
-        message: this.generateConfirmationMessage(newState),
-        newState: { ...newState, awaitingConfirmation: true },
-        shouldNotifyAgent: false
-      };
-    }
-
-    // Request missing information
+    // Handle general inquiries
+    const response = generateResponse('general_inquiry', { message, entities }, conversationState);
     return {
-      message: this.generateMissingInfoRequest(newState),
-      newState,
-      shouldNotifyAgent: false
-    };
-  }
-
-  private generateConfirmationMessage(state: ConversationState): string {
-    const { currentProperty, clientDetails } = state;
-    return `Perfect! Let me confirm your viewing details:\n\n**Viewing Summary:**\n• **Property:** ${currentProperty?.title}\n• **Date:** ${clientDetails?.preferredDate}\n• **Time:** ${clientDetails?.preferredTime}\n• **Location:** ${currentProperty?.address}\n• **Contact:** ${clientDetails?.name} (${clientDetails?.phone})\n\n**About this property:**\n• Price: KES ${currentProperty?.price.toLocaleString()}\n• ${currentProperty?.bedrooms} bedrooms, ${currentProperty?.bathrooms} bathrooms\n• ${currentProperty?.size.toLocaleString()} sq ft\n\nShould I confirm this viewing? Our property specialist will contact you within 24 hours to finalize the arrangements. Please reply with "yes" or "confirm" to proceed.`;
-  }
-
-  private generateMissingInfoRequest(state: ConversationState): string {
-    const missing = [];
-    
-    if (!state.clientDetails?.name) missing.push('your name');
-    if (!state.clientDetails?.phone) missing.push('phone number');
-    if (!state.clientDetails?.preferredDate) missing.push('preferred date');
-    if (!state.clientDetails?.preferredTime) missing.push('preferred time');
-
-    if (missing.length > 0) {
-      return `Great! To complete your viewing booking for **${state.currentProperty?.title}**, I still need ${missing.join(' and ')}.\n\nYou can provide everything at once, for example: "My name is Sarah Johnson, phone 0701234567, I'd like to visit this Friday at 3 PM"`;
-    }
-
-    return "I have all your details! Let me prepare the confirmation.";
-  }
-
-  private processViewingConfirmation(state: ConversationState, originalMessage: string): any {
-    if (!state.currentProperty || !this.hasCompleteClientDetails(state)) {
-      return {
-        message: "I'm sorry, but there seems to be missing information. Please provide your viewing details again.",
-        newState: { ...state, awaitingConfirmation: false },
-        shouldNotifyAgent: false
-      };
-    }
-
-    const viewingRequest: ViewingRequest = {
-      propertyId: state.currentProperty.id,
-      propertyTitle: state.currentProperty.title,
-      clientName: state.clientDetails?.name,
-      clientPhone: state.clientDetails?.phone,
-      clientEmail: state.clientDetails?.email,
-      preferredDate: state.clientDetails?.preferredDate,
-      preferredTime: state.clientDetails?.preferredTime,
-      agentId: state.currentProperty.agentId
+      message: response,
+      newState: conversationState
     };
 
+  } catch (error) {
+    console.error('Error processing message:', error);
     return {
-      message: `🎉 **Viewing Confirmed!**\n\nYour viewing for **${state.currentProperty.title}** has been successfully booked!\n\n**Confirmation Details:**\n• **Date & Time:** ${state.clientDetails?.preferredDate} at ${state.clientDetails?.preferredTime}\n• **Location:** ${state.currentProperty.address}\n• **Contact Person:** ${state.clientDetails?.name}\n• **Phone:** ${state.clientDetails?.phone}\n\n**What happens next:**\n✅ Our property specialist has been notified\n✅ You'll receive a confirmation call within 24 hours\n✅ Detailed directions will be provided before your visit\n✅ A property expert will give you a complete tour\n\n**Property Highlights:**\n• ${state.currentProperty.bedrooms} bedrooms, ${state.currentProperty.bathrooms} bathrooms\n• ${state.currentProperty.size.toLocaleString()} sq ft of luxury living space\n• Premium location in ${state.currentProperty.location}\n\nIs there anything else you'd like to know about this property or would you like to explore other properties in our portfolio?`,
-      newState: { 
-        ...state, 
-        awaitingConfirmation: false,
-        viewingInterest: false,
-        userPreferences: {
-          ...state.userPreferences,
-          hasBookedViewing: true,
-          lastBookedProperty: state.currentProperty.id
-        }
-      },
-      shouldNotifyAgent: true,
-      viewingRequest
+      message: "I apologize, but I'm experiencing some technical difficulties. Please try again or contact our team directly.",
+      newState: conversationState
     };
   }
+};
 
-  private findPropertyByName(name: string) {
-    return properties.find(p => 
-      p.title.toLowerCase().includes(name.toLowerCase()) ||
-      this.fuzzyMatch(p.title.toLowerCase(), name.toLowerCase(), 0.6)
-    );
-  }
+// Helper function to extract price range from entities
+const extractPriceRange = (priceRange: string) => {
+  const [min, max] = priceRange.split('-').map(Number);
+  return { min, max };
+};
 
-  private fuzzyMatch(text: string, target: string, threshold: number): boolean {
-    const words = target.split(' ');
-    const matchedWords = words.filter(word => text.includes(word));
-    return (matchedWords.length / words.length) >= threshold;
-  }
-
-  private isConfirmation(message: string): boolean {
-    const confirmWords = ['yes', 'confirm', 'book', 'proceed', 'go ahead', 'sure', 'okay', 'ok'];
-    return confirmWords.some(word => message.toLowerCase().includes(word));
-  }
-
-  private hasCompleteClientDetails(state: ConversationState): boolean {
-    const details = state.clientDetails;
-    return !!(details?.name && details?.phone && details?.preferredDate && details?.preferredTime);
-  }
-
-  private updateConversationState(
-    sessionKey: string, 
-    currentState: ConversationState, 
-    intent: any, 
-    response: any
-  ): void {
-    const updatedState = {
-      ...currentState,
-      ...response.newState,
-      conversationContext: intent.type
-    };
-
-    this.conversationStates.set(sessionKey, updatedState);
-  }
-
-  private async notifyAgent(viewingRequest: ViewingRequest, originalMessage: string): Promise<void> {
-    const agent = agents.find(a => a.id === viewingRequest.agentId);
-    if (!agent) return;
-
-    const notificationContent = `🏠 **New Viewing Request from AI Assistant**
-
-**Property:** ${viewingRequest.propertyTitle}
-**Scheduled Date:** ${viewingRequest.preferredDate}
-**Scheduled Time:** ${viewingRequest.preferredTime}
-
-**Client Details:**
-${viewingRequest.clientName ? `• Name: ${viewingRequest.clientName}` : ''}
-${viewingRequest.clientPhone ? `• Phone: ${viewingRequest.clientPhone}` : ''}
-${viewingRequest.clientEmail ? `• Email: ${viewingRequest.clientEmail}` : ''}
-
-**Original Request:** "${originalMessage}"
-
-The client has confirmed their interest and booked this viewing through our AI assistant. Please contact them to confirm the appointment and provide any additional property details.`;
-
-    const notificationMessage = {
-      id: `ai-notification-${Date.now()}`,
-      senderId: -1,
-      receiverId: viewingRequest.agentId,
-      senderName: 'AI Property Assistant',
-      content: notificationContent,
-      timestamp: new Date().toISOString(),
-      read: false,
-      propertyId: viewingRequest.propertyId,
-      clientInfo: {
-        name: viewingRequest.clientName || 'Potential Client',
-        email: viewingRequest.clientEmail || 'Not provided',
-        phone: viewingRequest.clientPhone || 'Not provided',
-        message: originalMessage,
-        preferredDate: viewingRequest.preferredDate,
-        preferredTime: viewingRequest.preferredTime
+const findMatchingProperties = (entities: any): Property[] => {
+  return properties.filter(property => {
+    if (entities.location && !property.location.toLowerCase().includes(entities.location.toLowerCase())) {
+      return false;
+    }
+    if (entities.bedrooms && property.bedrooms !== entities.bedrooms) {
+      return false;
+    }
+    if (entities.priceRange) {
+      const { min, max } = entities.priceRange;
+      if ((min && property.price < min) || (max && property.price > max)) {
+        return false;
       }
-    };
+    }
+    return true;
+  });
+};
 
-    globalMessages.push(notificationMessage);
-    console.log('Agent notification sent:', notificationMessage);
+const handleViewingRequest = (message: string, entities: any): AIResponse => {
+  const currentDetails = conversationState.viewingDetails || {};
+  
+  // Extract viewing details from the message
+  if (!currentDetails.name && entities.name) {
+    currentDetails.name = entities.name;
   }
-}
+  if (!currentDetails.contact && entities.contact) {
+    currentDetails.contact = entities.contact;
+  }
+  if (!currentDetails.date && entities.date) {
+    currentDetails.date = entities.date;
+  }
+  if (!currentDetails.time && entities.time) {
+    currentDetails.time = entities.time;
+  }
 
-export const propertyAI = new PropertyAIService();
+  const newState = {
+    ...conversationState,
+    currentStep: 'collecting_details' as const,
+    viewingDetails: currentDetails
+  };
+
+  // Check if we have all required details
+  if (currentDetails.name && currentDetails.contact && currentDetails.date && currentDetails.time) {
+    // All details collected, ask for confirmation
+    const response = generateResponse('confirm_viewing', { 
+      details: currentDetails, 
+      property: conversationState.propertyContext 
+    }, newState);
+    
+    return {
+      message: response,
+      newState: { ...newState, currentStep: 'confirming_booking' }
+    };
+  } else {
+    // Still need more details
+    const response = generateResponse('collect_viewing_details', { 
+      currentDetails, 
+      property: conversationState.propertyContext 
+    }, newState);
+    
+    return {
+      message: response,
+      newState
+    };
+  }
+};
+
+export const confirmViewingBooking = (): AIResponse => {
+  const details = conversationState.viewingDetails;
+  const property = conversationState.propertyContext;
+  
+  if (!details?.name || !details?.contact || !details?.date || !details?.time || !property) {
+    return {
+      message: "I'm sorry, but I don't have all the necessary details for the booking. Let's start over.",
+      newState: { currentStep: 'general_chat' }
+    };
+  }
+
+  const viewingRequest: ViewingRequest = {
+    propertyId: property.id,
+    clientName: details.name,
+    clientContact: details.contact,
+    preferredDate: details.date,
+    preferredTime: details.time,
+    message: `Viewing request for ${property.title} in ${property.location}`
+  };
+
+  const response = generateResponse('booking_confirmed', { 
+    details, 
+    property 
+  }, conversationState);
+
+  return {
+    message: response,
+    newState: { currentStep: 'general_chat' },
+    shouldNotifyAgent: true,
+    viewingRequest
+  };
+};
+
+export const cancelViewingBooking = (): AIResponse => {
+  const response = generateResponse('booking_cancelled', {}, conversationState);
+  
+  return {
+    message: response,
+    newState: { currentStep: 'general_chat' }
+  };
+};
+
+export const updateConversationState = (newState: ConversationState) => {
+  conversationState = newState;
+};
