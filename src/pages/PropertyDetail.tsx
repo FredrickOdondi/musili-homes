@@ -1,8 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getPropertyById } from '@/data/properties';
-import { agents } from '@/data/agents';
+import { getPropertyById, getAgentById } from '@/services/database';
 import { formatCurrency } from '@/lib/utils';
 import { Property, Agent } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -16,23 +14,38 @@ const PropertyDetail: React.FC = () => {
   const [agent, setAgent] = useState<Agent | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
   const [showContactForm, setShowContactForm] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   
   useEffect(() => {
-    if (id) {
-      const propertyData = getPropertyById(parseInt(id, 10));
-      if (propertyData) {
-        setProperty(propertyData);
-        setActiveImage(propertyData.images[0]);
-        
-        // Find agent
-        const propertyAgent = agents.find(a => a.id === propertyData.agentId);
-        if (propertyAgent) {
-          setAgent(propertyAgent);
+    const fetchData = async () => {
+      if (id) {
+        setLoading(true);
+        const propertyData = await getPropertyById(parseInt(id, 10));
+        if (propertyData) {
+          setProperty(propertyData);
+          setActiveImage(propertyData.images[0]);
+          
+          // Find agent
+          const propertyAgent = await getAgentById(propertyData.agentId);
+          if (propertyAgent) {
+            setAgent(propertyAgent);
+          }
         }
+        setLoading(false);
       }
-    }
+    };
+    
+    fetchData();
   }, [id]);
+  
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-20 text-center">
+        <div className="text-deep-charcoal">Loading property details...</div>
+      </div>
+    );
+  }
   
   if (!property) {
     return (

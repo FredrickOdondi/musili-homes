@@ -2,17 +2,31 @@
 import React, { useState, useEffect } from 'react';
 import PropertyGrid from '@/components/properties/PropertyGrid';
 import PropertySearch from '@/components/properties/PropertySearch';
-import { properties } from '@/data/properties';
+import { getProperties } from '@/services/database';
 import { Property } from '@/types';
 
 const Properties: React.FC = () => {
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [searchParams, setSearchParams] = useState({
     location: '',
     minPrice: undefined as number | undefined,
     maxPrice: undefined as number | undefined,
     bedrooms: undefined as number | undefined
   });
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchProperties = async () => {
+      setLoading(true);
+      const data = await getProperties();
+      setProperties(data);
+      setFilteredProperties(data);
+      setLoading(false);
+    };
+    
+    fetchProperties();
+  }, []);
   
   const handleSearch = (params: any) => {
     setSearchParams(params);
@@ -45,7 +59,15 @@ const Properties: React.FC = () => {
     });
     
     setFilteredProperties(filtered);
-  }, [searchParams]);
+  }, [searchParams, properties]);
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-pure-white flex items-center justify-center">
+        <div className="text-deep-charcoal">Loading properties...</div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-pure-white">

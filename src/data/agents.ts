@@ -1,64 +1,21 @@
-
 import { Agent, Admin, User } from '@/types';
+import { getAgents, getAllUsers, getUserByEmail, authenticate } from '@/services/database';
 
-export const agents: Agent[] = [
-  {
-    id: 1,
-    name: "Sarah Kimani",
-    email: "sarah@musili.co.ke",
-    password: "agent123", // In a real app, this would be hashed
-    phone: "+254 712 345 678",
-    photo: "/agent1.jpg",
-    bio: "Sarah specializes in luxury residential properties in Nairobi and Naivasha.",
-    properties: [1, 4],
-    role: "agent"
-  },
-  {
-    id: 2,
-    name: "David Ochieng",
-    email: "david@musili.co.ke",
-    password: "agent123",
-    phone: "+254 723 456 789",
-    photo: "/agent2.jpg",
-    bio: "David focuses on high-end apartments and penthouses in Nairobi's upmarket areas.",
-    properties: [2, 5],
-    role: "agent"
-  },
-  {
-    id: 3,
-    name: "Lisa Wanjiku",
-    email: "lisa@musili.co.ke",
-    password: "agent123",
-    phone: "+254 734 567 890",
-    photo: "/agent3.jpg",
-    bio: "Lisa specializes in exclusive estates and vacation properties.",
-    properties: [3, 6],
-    role: "agent"
-  }
-];
+// Export async functions that fetch from database
+export const agents: Agent[] = [];
+export const admins: Admin[] = [];
 
-export const admins: Admin[] = [
-  {
-    id: 1,
-    name: "John Musili",
-    email: "admin@musili.co.ke",
-    password: "admin123",
-    role: "admin"
-  }
-];
+// Initialize data
+getAgents().then(data => {
+  agents.length = 0;
+  agents.push(...data);
+});
 
-export const getAllUsers = (): User[] => {
-  return [...agents, ...admins];
-};
+getAllUsers().then(data => {
+  const adminUsers = data.filter(user => user.role === 'admin');
+  admins.length = 0;
+  admins.push(...adminUsers as Admin[]);
+});
 
-export const getUserByEmail = (email: string): User | undefined => {
-  return getAllUsers().find(user => user.email === email);
-};
-
-export const authenticate = (email: string, password: string): User | null => {
-  const user = getUserByEmail(email);
-  if (user && user.password === password) {
-    return user;
-  }
-  return null;
-};
+// Keep original function exports for compatibility
+export { getAllUsers, getUserByEmail, authenticate };
