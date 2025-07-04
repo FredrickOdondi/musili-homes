@@ -47,8 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       console.log('Attempting login with:', email, password);
       
-      // Simple mock authentication
-      const authenticatedUser = authenticate(email, password);
+      // Authenticate user
+      const authenticatedUser = await authenticate(email, password);
       console.log('Authentication result:', authenticatedUser);
       
       if (authenticatedUser) {

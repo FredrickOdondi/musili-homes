@@ -1,11 +1,36 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getFeaturedProperties } from '@/data/properties';
 import PropertyCard from '@/components/properties/PropertyCard';
+import { Property } from '@/types';
 
 const FeaturedProperties: React.FC = () => {
-  const featuredProperties = getFeaturedProperties();
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedProperties = async () => {
+      setLoading(true);
+      const properties = await getFeaturedProperties();
+      setFeaturedProperties(properties);
+      setLoading(false);
+    };
+
+    fetchFeaturedProperties();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-32 bg-pure-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center">
+            <div className="text-deep-charcoal">Loading featured properties...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-32 bg-pure-white">

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Agent } from '@/types';
+import { Agent, Task } from '@/types';
 import { properties } from '@/data/properties';
 import { Property } from '@/types';
-import { tasks, getTasksByAgentId, updateTaskStatus } from '@/data/tasks';
+import { getTasksByAgentId, updateTaskStatus } from '@/data/tasks';
 import { Card } from '@/components/ui/card';
 import { Home, DollarSign, Users, LogOut, CheckCircle, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -18,8 +18,8 @@ const AgentDashboard: React.FC = () => {
   const { isAgent, user, logout } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [agentProperties, setAgentProperties] = React.useState<Property[]>([]);
-  const [agentTasks, setAgentTasks] = React.useState<typeof tasks>([]);
+  const [agentProperties, setAgentProperties] = useState<Property[]>([]);
+  const [agentTasks, setAgentTasks] = useState<Task[]>([]);
   const [activeContact, setActiveContact] = useState<{id: number; name: string; role: 'admin' | 'client'}>({
     id: 1, 
     name: "John Musili", 
@@ -27,7 +27,7 @@ const AgentDashboard: React.FC = () => {
   });
   
   // Redirect if not agent
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAgent) {
       navigate('/login');
     } else {
@@ -36,8 +36,12 @@ const AgentDashboard: React.FC = () => {
       const assignedProperties = properties.filter(p => agent.properties.includes(p.id));
       setAgentProperties(assignedProperties);
       
-      const assignedTasks = getTasksByAgentId(agent.id);
-      setAgentTasks(assignedTasks);
+      // Fetch tasks for this agent
+      const fetchTasks = async () => {
+        const tasks = await getTasksByAgentId(agent.id);
+        setAgentTasks(tasks);
+      };
+      fetchTasks();
     }
   }, [isAgent, navigate, user]);
   
@@ -50,8 +54,8 @@ const AgentDashboard: React.FC = () => {
     navigate('/');
   };
   
-  const handleCompleteTask = (taskId: number) => {
-    const updatedTask = updateTaskStatus(taskId, 'Completed');
+  const handleCompleteTask = async (taskId: number) => {
+    const updatedTask = await updateTaskStatus(taskId, 'Completed');
     if (updatedTask) {
       setAgentTasks(prev => 
         prev.map(t => t.id === taskId ? { ...t, status: 'Completed' } : t)

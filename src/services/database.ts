@@ -17,9 +17,20 @@ export const getProperties = async (): Promise<Property[]> => {
   }
   
   return data?.map(property => ({
-    ...property,
+    id: property.id,
+    title: property.title,
+    description: property.description || '',
+    price: property.price,
+    location: property.location,
+    address: property.address,
+    bedrooms: property.bedrooms,
+    bathrooms: property.bathrooms,
+    size: property.size || 0,
+    featured: property.featured || false,
+    status: property.status as 'For Sale' | 'For Rent' | 'Sold' | 'Rented',
+    agentId: property.agent_id,
     images: property.property_images?.map((img: any) => img.image_url) || [],
-    createdAt: property.created_at
+    createdAt: property.created_at || new Date().toISOString()
   })) || [];
 };
 
@@ -39,9 +50,20 @@ export const getPropertyById = async (id: number): Promise<Property | null> => {
   }
   
   return data ? {
-    ...data,
+    id: data.id,
+    title: data.title,
+    description: data.description || '',
+    price: data.price,
+    location: data.location,
+    address: data.address,
+    bedrooms: data.bedrooms,
+    bathrooms: data.bathrooms,
+    size: data.size || 0,
+    featured: data.featured || false,
+    status: data.status as 'For Sale' | 'For Rent' | 'Sold' | 'Rented',
+    agentId: data.agent_id,
     images: data.property_images?.map((img: any) => img.image_url) || [],
-    createdAt: data.created_at
+    createdAt: data.created_at || new Date().toISOString()
   } : null;
 };
 
@@ -60,9 +82,20 @@ export const getFeaturedProperties = async (): Promise<Property[]> => {
   }
   
   return data?.map(property => ({
-    ...property,
+    id: property.id,
+    title: property.title,
+    description: property.description || '',
+    price: property.price,
+    location: property.location,
+    address: property.address,
+    bedrooms: property.bedrooms,
+    bathrooms: property.bathrooms,
+    size: property.size || 0,
+    featured: property.featured || false,
+    status: property.status as 'For Sale' | 'For Rent' | 'Sold' | 'Rented',
+    agentId: property.agent_id,
     images: property.property_images?.map((img: any) => img.image_url) || [],
-    createdAt: property.created_at
+    createdAt: property.created_at || new Date().toISOString()
   })) || [];
 };
 
@@ -123,7 +156,7 @@ export const getAgentById = async (id: number): Promise<Agent | null> => {
 
 // Users and Authentication
 export const getAllUsers = async (): Promise<User[]> => {
-  const { data, error } = await supabase
+  const { data: users, error } = await supabase
     .from('users')
     .select('*');
   
@@ -132,10 +165,39 @@ export const getAllUsers = async (): Promise<User[]> => {
     return [];
   }
   
-  return data?.map(user => ({
-    ...user,
-    password: '' // Don't expose passwords
-  })) || [];
+  const result: User[] = [];
+  
+  for (const user of users || []) {
+    if (user.role === 'agent') {
+      const { data: agentData } = await supabase
+        .from('agents')
+        .select('bio')
+        .eq('id', user.id)
+        .single();
+      
+      result.push({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        password: '', // Don't expose passwords
+        phone: user.phone || '',
+        photo: user.photo || '',
+        bio: agentData?.bio || '',
+        properties: [], // Will be populated separately if needed
+        role: 'agent' as const
+      });
+    } else if (user.role === 'admin') {
+      result.push({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        password: '', // Don't expose passwords
+        role: 'admin' as const
+      });
+    }
+  }
+  
+  return result;
 };
 
 export const getUserByEmail = async (email: string): Promise<User | null> => {
@@ -150,10 +212,37 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
     return null;
   }
   
-  return data ? {
-    ...data,
-    password: '' // Don't expose passwords
-  } : null;
+  if (!data) return null;
+  
+  if (data.role === 'agent') {
+    const { data: agentData } = await supabase
+      .from('agents')
+      .select('bio')
+      .eq('id', data.id)
+      .single();
+    
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      password: '', // Don't expose passwords
+      phone: data.phone || '',
+      photo: data.photo || '',
+      bio: agentData?.bio || '',
+      properties: [], // Will be populated separately if needed
+      role: 'agent' as const
+    };
+  } else if (data.role === 'admin') {
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      password: '', // Don't expose passwords
+      role: 'admin' as const
+    };
+  }
+  
+  return null;
 };
 
 export const authenticate = async (email: string, password: string): Promise<User | null> => {
@@ -169,10 +258,37 @@ export const authenticate = async (email: string, password: string): Promise<Use
     return null;
   }
   
-  return data ? {
-    ...data,
-    password: '' // Don't expose passwords
-  } : null;
+  if (!data) return null;
+  
+  if (data.role === 'agent') {
+    const { data: agentData } = await supabase
+      .from('agents')
+      .select('bio')
+      .eq('id', data.id)
+      .single();
+    
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      password: '', // Don't expose passwords
+      phone: data.phone || '',
+      photo: data.photo || '',
+      bio: agentData?.bio || '',
+      properties: [], // Will be populated separately if needed
+      role: 'agent' as const
+    };
+  } else if (data.role === 'admin') {
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      password: '', // Don't expose passwords
+      role: 'admin' as const
+    };
+  }
+  
+  return null;
 };
 
 // Tasks
@@ -187,10 +303,14 @@ export const getTasks = async (): Promise<Task[]> => {
   }
   
   return data?.map(task => ({
-    ...task,
-    dueDate: task.due_date,
+    id: task.id,
+    title: task.title,
+    description: task.description || '',
+    priority: task.priority as 'Low' | 'Medium' | 'High',
+    status: task.status as 'Pending' | 'In Progress' | 'Completed',
+    dueDate: task.due_date || '',
     agentId: task.agent_id,
-    createdAt: task.created_at
+    createdAt: task.created_at || new Date().toISOString()
   })) || [];
 };
 
@@ -206,10 +326,14 @@ export const getTasksByAgentId = async (agentId: number): Promise<Task[]> => {
   }
   
   return data?.map(task => ({
-    ...task,
-    dueDate: task.due_date,
+    id: task.id,
+    title: task.title,
+    description: task.description || '',
+    priority: task.priority as 'Low' | 'Medium' | 'High',
+    status: task.status as 'Pending' | 'In Progress' | 'Completed',
+    dueDate: task.due_date || '',
     agentId: task.agent_id,
-    createdAt: task.created_at
+    createdAt: task.created_at || new Date().toISOString()
   })) || [];
 };
 
@@ -233,10 +357,14 @@ export const addTask = async (task: Omit<Task, 'id' | 'createdAt'>): Promise<Tas
   }
   
   return data ? {
-    ...data,
-    dueDate: data.due_date,
+    id: data.id,
+    title: data.title,
+    description: data.description || '',
+    priority: data.priority as 'Low' | 'Medium' | 'High',
+    status: data.status as 'Pending' | 'In Progress' | 'Completed',
+    dueDate: data.due_date || '',
     agentId: data.agent_id,
-    createdAt: data.created_at
+    createdAt: data.created_at || new Date().toISOString()
   } : null;
 };
 
@@ -254,9 +382,13 @@ export const updateTaskStatus = async (taskId: number, status: Task['status']): 
   }
   
   return data ? {
-    ...data,
-    dueDate: data.due_date,
+    id: data.id,
+    title: data.title,
+    description: data.description || '',
+    priority: data.priority as 'Low' | 'Medium' | 'High',
+    status: data.status as 'Pending' | 'In Progress' | 'Completed',
+    dueDate: data.due_date || '',
     agentId: data.agent_id,
-    createdAt: data.created_at
+    createdAt: data.created_at || new Date().toISOString()
   } : null;
 };
