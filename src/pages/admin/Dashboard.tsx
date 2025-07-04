@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -119,23 +118,40 @@ const AdminDashboard: React.FC = () => {
     navigate('/');
   };
   
-  const handleCreateTask = (values: z.infer<typeof taskSchema>) => {
-    const newTask = addTask({
-      title: values.title,
-      description: values.description,
-      priority: values.priority as Task["priority"],
-      status: values.status as Task["status"],
-      dueDate: values.dueDate,
-      agentId: values.agentId,
-    });
-    
-    toast({
-      title: "Task Created",
-      description: `Task "${newTask.title}" has been assigned to ${agents.find(a => a.id === newTask.agentId)?.name}`,
-    });
-    
-    setTaskDialogOpen(false);
-    taskForm.reset();
+  const handleCreateTask = async (values: z.infer<typeof taskSchema>) => {
+    try {
+      const newTask = await addTask({
+        title: values.title,
+        description: values.description,
+        priority: values.priority as Task["priority"],
+        status: values.status as Task["status"],
+        dueDate: values.dueDate,
+        agentId: values.agentId,
+      });
+      
+      if (newTask) {
+        toast({
+          title: "Task Created",
+          description: `Task "${newTask.title}" has been assigned to ${agents.find(a => a.id === newTask.agentId)?.name}`,
+        });
+        
+        setTaskDialogOpen(false);
+        taskForm.reset();
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to create task. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error creating task:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create task. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
   
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
